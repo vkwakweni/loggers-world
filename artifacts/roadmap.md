@@ -24,7 +24,7 @@ last-updated: 2026-07-18
 - [x] Finalize `LogEntry` schema: `{entryId, typeId, ownerId, fields: {...}, createdAt}`
 - [x] Define API contract: `POST/GET /log-types`, `GET /log-types/:typeId`, `POST/GET /log-types/:typeId/entries`, `PATCH/DELETE /log-types/:typeId/entries/:createdAt`
 - [x] Sketch wireframes: dashboard, log-type builder, entry form, entry list, edit/delete entry
-- [ ] Set up GitHub repo + branch strategy (`main` + feature branches)
+- [x] Set up GitHub repo + branch strategy (`main` + feature branches)
 - [ ] `cdk init` empty stack; scaffold `frontend/` (Vite) and `backend/` (Express) folders
 
 ## Day 2 — Infrastructure (IaC)
