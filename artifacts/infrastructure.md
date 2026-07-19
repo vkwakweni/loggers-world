@@ -31,3 +31,6 @@ It is also Cognito that [ensures the uniqueness](https://docs.aws.amazon.com/cog
 The Function URL is a separate AWS resource that gets attached to the Lambda function in [`infra-stack.ts`](../infra/lib/infra-stack.ts) (via CDK's `addFunctionUrl()`).
 
 ## IAM Permissions
+By default, AWS's security model is deny-by-default — a resource has no access to any other resource until an IAM policy explicitly grants it.
+
+1. **Lambda execution role → DynamoDB table**: granted via CDK's `table.grantReadWriteData(backendFunction)`. This inspects both constructs and attaches a scoped-down policy directly to the Lambda's execution role, granting only the specific DynamoDB actions needed (`GetItem`, `PutItem`, `Query`, etc.) on that table's ARN specifically, not `*` — the CDK idiom for least-privilege grants between two constructs that already reference each other.

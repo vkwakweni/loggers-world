@@ -34,8 +34,8 @@ last-updated: 2026-07-18
 - [x] Define DynamoDB table in CDK (single-table design: `PK`/`SK` as generic string keys, `PAY_PER_REQUEST` billing, no GSI — the base table alone satisfies all access patterns given the key scheme in `data-models.md`)
 - [x] Define Cognito User Pool + App Client in CDK
 - [x] Wrap Express app for Lambda (e.g. `serverless-http`) + attach Function URL
-- [ ] Grant Lambda IAM read/write on the DynamoDB table
-- [ ] Pass table name / pool ID to Lambda via env vars
+- [x] Grant Lambda IAM read/write on the DynamoDB table
+- [x] Pass table name / pool ID to Lambda via env vars
 - [ ] `cdk deploy` to dev; verify resources in AWS console
 - [ ] Smoke test: hit `<Function URL>/health` directly, confirm a clean response
 

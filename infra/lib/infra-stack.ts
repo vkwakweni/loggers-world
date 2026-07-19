@@ -33,7 +33,15 @@ export class InfraStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'lambda.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../../backend')),
+      environment: {
+        TABLE_NAME: table.tableName,
+        USER_POOL_ID: userPool.userPoolId,
+        USER_POOL_CLIENT_ID: userPoolClient.userPoolClientId,
+      },
     });
+
+    // least-privilege: read/write on this table's ARN only, not "*"
+    table.grantReadWriteData(backendFunction);
 
     const backendFunctionUrl = backendFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
