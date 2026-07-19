@@ -29,8 +29,8 @@ last-updated: 2026-07-18
 
 ## Day 2 — Infrastructure (IaC)
 
-- [ ] Define DynamoDB table in CDK (single-table design, `PK = USER#<ownerId>`, `SK` prefixed `TYPE#`/`ENTRY#`, entries' `SK` composed with `typeId` + `createdAt` — no GSI needed, all access patterns satisfied by the base table)
-- [ ] Define Cognito User Pool + App Client in CDK
+- [x] Define DynamoDB table in CDK (single-table design: `PK`/`SK` as generic string keys, `PAY_PER_REQUEST` billing, no GSI — the base table alone satisfies all access patterns given the key scheme in `data-models.md`)
+- [x] Define Cognito User Pool + App Client in CDK
 - [ ] Wrap Express app for Lambda (e.g. `serverless-http`) + attach Function URL
 - [ ] Grant Lambda IAM read/write on the DynamoDB table
 - [ ] Pass table name / pool ID to Lambda via env vars
@@ -40,6 +40,7 @@ last-updated: 2026-07-18
 ## Day 3 — Backend Development
 
 - [ ] Scaffold Express routes/controllers + DynamoDB client wrapper
+- [ ] Implement `SK` composition in the DynamoDB client wrapper (`TYPE#<typeId>` / `ENTRY#<typeId>#<createdAt>` prefixes, per `data-models.md`)
 - [ ] Implement `LogType` CRUD endpoints
 - [ ] Implement `LogEntry` CRUD endpoints (validate entry fields against parent `LogType`)
 - [ ] Add Cognito JWT verification middleware (validate token, extract user ID, scope queries to owner)
@@ -86,6 +87,7 @@ last-updated: 2026-07-18
 
 ## Later / Further Development
 
+- DynamoDB table's `removalPolicy` is set to `DESTROY` (table + data deleted with the stack) for dev-time convenience — before a real production deploy (Day 7), reconsider switching to `RETAIN` so a stack teardown can't silently wipe user data
 - Dedicated timeline view: a cross-entry chronological display (distinct from the per-log-type list), possibly with date grouping/visual density beyond a plain table
 - Client-side sort toggle: let the user re-sort the entry list by any field (not just chronological), on top of the free DynamoDB-order sort shipped in Day 5
 - `LogType` editing (rename/add/remove fields): not in this week's scope since only creation is planned, but once editing exists, existing `LogEntry` items won't retroactively match the updated `fields` list — needs a strategy (e.g. migrate old entries, or tolerate/display drifted fields gracefully)
