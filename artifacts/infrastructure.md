@@ -26,6 +26,8 @@ On sign-in, the App Client issues a JWT to the frontend. The frontend attaches t
 It is also Cognito that [ensures the uniqueness](https://docs.aws.amazon.com/cognito/latest/developerguide/user-pool-settings-attributes.html#user-pool-settings-aliases) of email addresses and usernames.
 
 ## Lambda Function
-**AWS Lmabda** is a serverless compute service in which code is only invoked when it is trigger and shut down after idling. Given that Lambda understands play JSON objects and not HTTP directly, an API or an adapter is needed for communication. This is where `serverless-http` comes in: the Express `app` constructs a request from a Lambda `event`, Express handles it like a real HTTP request, and then passes the response repackaged in JSON for Lambda; it is `serverless-http` that handles these hand-overs.
+**AWS Lambda** is a serverless compute service in which code is only invoked when it is triggered and shut down after idling. Given that Lambda understands plain JSON objects and not HTTP directly, an adapter is needed for communication. This is where `serverless-http` comes in: it constructs a mock request (same shape as a real **Express** `req`, but built from the Lambda `event` JSON instead of a real socket) so the Express `app` handles it like a real HTTP request, then repackages the response back into the JSON shape Lambda expects; it is `serverless-http` that handles these hand-overs, not the Express app itself. The Express `app` never knows it's running inside Lambda — it stays framework-agnostic, developed and tested locally with `app.listen()` like any normal Express app, with only the thin `serverless-http` wrapper differing between local and Lambda environments.
+
+The Function URL is a separate AWS resource that gets attached to the Lambda function in [`infra-stack.ts`](../infra/lib/infra-stack.ts) (via CDK's `addFunctionUrl()`).
 
 ## IAM Permissions

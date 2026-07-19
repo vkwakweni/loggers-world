@@ -29,13 +29,15 @@ last-updated: 2026-07-18
 
 ## Day 2 — Infrastructure (IaC)
 
+> **Resolved blocker:** the default `node` resolved to system Node v12.22.9, which broke two things — running `backend/index.js` locally (`serverless-http`/Express 5 need Node ≥18), and `cdk synth`/`cdk deploy` themselves (`aws-cdk-lib` needs Node ≥20, the `cdk` CLI needs ≥18). `nvm` was already installed with v22.13.1 set as default; the v12 binary only showed up in non-interactive shell sessions that skip `.bashrc`. Confirmed a real interactive shell resolves to v22.13.1, and `cdk synth` succeeds under it.
+
 - [x] Define DynamoDB table in CDK (single-table design: `PK`/`SK` as generic string keys, `PAY_PER_REQUEST` billing, no GSI — the base table alone satisfies all access patterns given the key scheme in `data-models.md`)
 - [x] Define Cognito User Pool + App Client in CDK
-- [ ] Wrap Express app for Lambda (e.g. `serverless-http`) + attach Function URL
+- [x] Wrap Express app for Lambda (e.g. `serverless-http`) + attach Function URL
 - [ ] Grant Lambda IAM read/write on the DynamoDB table
 - [ ] Pass table name / pool ID to Lambda via env vars
 - [ ] `cdk deploy` to dev; verify resources in AWS console
-- [ ] Smoke test: hit Function URL directly, confirm a clean response
+- [ ] Smoke test: hit `<Function URL>/health` directly, confirm a clean response
 
 ## Day 3 — Backend Development
 
