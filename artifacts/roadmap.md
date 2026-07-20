@@ -36,8 +36,8 @@ last-updated: 2026-07-18
 - [x] Wrap Express app for Lambda (e.g. `serverless-http`) + attach Function URL
 - [x] Grant Lambda IAM read/write on the DynamoDB table
 - [x] Pass table name / pool ID to Lambda via env vars
-- [ ] `cdk deploy` to dev; verify resources in AWS console
-- [ ] Smoke test: hit `<Function URL>/health` directly, confirm a clean response
+- [x] `cdk deploy` to dev; verify resources in AWS console
+- [x] Smoke test: hit `<Function URL>/health` directly, confirm a clean response
 
 ## Day 3 — Backend Development
 
