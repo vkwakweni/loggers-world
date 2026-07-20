@@ -29,17 +29,20 @@ last-updated: 2026-07-18
 
 ## Day 2 — Infrastructure (IaC)
 
-- [ ] Define DynamoDB table in CDK (single-table design, `PK = USER#<ownerId>`, `SK` prefixed `TYPE#`/`ENTRY#`, entries' `SK` composed with `typeId` + `createdAt` — no GSI needed, all access patterns satisfied by the base table)
-- [ ] Define Cognito User Pool + App Client in CDK
-- [ ] Wrap Express app for Lambda (e.g. `serverless-http`) + attach Function URL
-- [ ] Grant Lambda IAM read/write on the DynamoDB table
-- [ ] Pass table name / pool ID to Lambda via env vars
-- [ ] `cdk deploy` to dev; verify resources in AWS console
-- [ ] Smoke test: hit Function URL directly, confirm a clean response
+> **Resolved blocker:** the default `node` resolved to system Node v12.22.9, which broke two things — running `backend/index.js` locally (`serverless-http`/Express 5 need Node ≥18), and `cdk synth`/`cdk deploy` themselves (`aws-cdk-lib` needs Node ≥20, the `cdk` CLI needs ≥18). `nvm` was already installed with v22.13.1 set as default; the v12 binary only showed up in non-interactive shell sessions that skip `.bashrc`. Confirmed a real interactive shell resolves to v22.13.1, and `cdk synth` succeeds under it.
+
+- [x] Define DynamoDB table in CDK (single-table design: `PK`/`SK` as generic string keys, `PAY_PER_REQUEST` billing, no GSI — the base table alone satisfies all access patterns given the key scheme in `data-models.md`)
+- [x] Define Cognito User Pool + App Client in CDK
+- [x] Wrap Express app for Lambda (e.g. `serverless-http`) + attach Function URL
+- [x] Grant Lambda IAM read/write on the DynamoDB table
+- [x] Pass table name / pool ID to Lambda via env vars
+- [x] `cdk deploy` to dev; verify resources in AWS console
+- [x] Smoke test: hit `<Function URL>/health` directly, confirm a clean response
 
 ## Day 3 — Backend Development
 
 - [ ] Scaffold Express routes/controllers + DynamoDB client wrapper
+- [ ] Implement `SK` composition in the DynamoDB client wrapper (`TYPE#<typeId>` / `ENTRY#<typeId>#<createdAt>` prefixes, per `data-models.md`)
 - [ ] Implement `LogType` CRUD endpoints
 - [ ] Implement `LogEntry` CRUD endpoints (validate entry fields against parent `LogType`)
 - [ ] Add Cognito JWT verification middleware (validate token, extract user ID, scope queries to owner)
@@ -86,6 +89,7 @@ last-updated: 2026-07-18
 
 ## Later / Further Development
 
+- DynamoDB table's `removalPolicy` is set to `DESTROY` (table + data deleted with the stack) for dev-time convenience — before a real production deploy (Day 7), reconsider switching to `RETAIN` so a stack teardown can't silently wipe user data
 - Dedicated timeline view: a cross-entry chronological display (distinct from the per-log-type list), possibly with date grouping/visual density beyond a plain table
 - Client-side sort toggle: let the user re-sort the entry list by any field (not just chronological), on top of the free DynamoDB-order sort shipped in Day 5
 - `LogType` editing (rename/add/remove fields): not in this week's scope since only creation is planned, but once editing exists, existing `LogEntry` items won't retroactively match the updated `fields` list — needs a strategy (e.g. migrate old entries, or tolerate/display drifted fields gracefully)
