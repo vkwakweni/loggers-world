@@ -41,7 +41,7 @@ last-updated: 2026-07-18
 
 ## Day 3 — Backend Development
 
-- [ ] Scaffold Express routes/controllers + DynamoDB client wrapper
+- [x] Scaffold Express routes/controllers + DynamoDB client wrapper
 - [ ] Implement `SK` composition in the DynamoDB client wrapper (`TYPE#<typeId>` / `ENTRY#<typeId>#<createdAt>` prefixes, per `data-models.md`)
 - [ ] Implement `LogType` CRUD endpoints
 - [ ] Implement `LogEntry` CRUD endpoints (validate entry fields against parent `LogType`)
@@ -93,4 +93,5 @@ last-updated: 2026-07-18
 - Dedicated timeline view: a cross-entry chronological display (distinct from the per-log-type list), possibly with date grouping/visual density beyond a plain table
 - Client-side sort toggle: let the user re-sort the entry list by any field (not just chronological), on top of the free DynamoDB-order sort shipped in Day 5
 - `LogType` editing (rename/add/remove fields): not in this week's scope since only creation is planned, but once editing exists, existing `LogEntry` items won't retroactively match the updated `fields` list — needs a strategy (e.g. migrate old entries, or tolerate/display drifted fields gracefully)
+- `LogType` deletion: same underlying problem as editing above, just sharper — deleting a `LogType` that still has `LogEntry` items pointing at it orphans them (no `fields` schema left to validate/render against). Needs a decision before implementing: cascade-delete all its entries, block deletion while entries exist, or soft-delete the type instead
 - Entry filtering: let the user narrow the entry list by field value or date range, beyond the default chronological view shipped in Day 5
