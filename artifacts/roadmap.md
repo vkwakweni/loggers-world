@@ -47,7 +47,7 @@ last-updated: 2026-07-18
 - [x] Implement `LogType` CRUD endpoints
 - [x] Implement `LogEntry` CRUD endpoints (validate entry fields against parent `LogType`)
 - [x] Unit tests for route handlers (mock DynamoDB client)
-- [ ] Deploy Lambda, hit endpoints via curl/Postman
+- [x] Deploy Lambda, hit endpoints via curl/Postman
 
 ## Day 4 — Frontend Development (core)
 - [ ] Scaffold React/Vite app + routing (`react-router`)
