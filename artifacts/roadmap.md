@@ -46,7 +46,7 @@ last-updated: 2026-07-18
 - [x] Add Cognito JWT verification middleware (validate token, extract user ID, scope queries to owner) — reordered ahead of CRUD, since `LogType`/`LogEntry` creation needs a real `req.ownerId` to build and test against
 - [x] Implement `LogType` CRUD endpoints
 - [x] Implement `LogEntry` CRUD endpoints (validate entry fields against parent `LogType`)
-- [ ] Unit tests for route handlers (mock DynamoDB client)
+- [x] Unit tests for route handlers (mock DynamoDB client)
 - [ ] Deploy Lambda, hit endpoints via curl/Postman
 
 ## Day 4 — Frontend Development (core)
