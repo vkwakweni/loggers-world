@@ -31,3 +31,6 @@ Thumbs.db
 
 # Personal setup notes
 artifacts/aws-setup.md
+
+# Local dev-only scripts (not part of the app)
+backend/scripts/

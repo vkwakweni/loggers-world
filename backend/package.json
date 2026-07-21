@@ -3,14 +3,21 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1091.0",
+    "@aws-sdk/lib-dynamodb": "^3.1091.0",
+    "aws-jwt-verify": "^5.2.1",
     "express": "^5.2.1",
     "serverless-http": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "amazon-cognito-identity-js": "^6.3.20"
   }
 }
