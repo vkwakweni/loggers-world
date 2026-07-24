@@ -50,12 +50,15 @@ last-updated: 2026-07-18
 - [x] Deploy Lambda, hit endpoints via curl/Postman
 
 ## Day 4 — Frontend Development (core)
-- [ ] Scaffold React/Vite app + routing (`react-router`)
-- [ ] Integrate Cognito auth (sign-up, sign-in, sign-out, token storage)
-- [ ] Build protected-route wrapper
-- [ ] Build "Log Type Builder" form (dynamically add fields: name + type)
-- [ ] Wire builder to `POST /log-types`
-- [ ] Build "My Log Types" list view (`GET /log-types`)
+- [x] Scaffold React/Vite app + routing (`react-router`)
+- [x] Integrate Cognito auth (sign-up, sign-in, sign-out, token storage)
+- [x] Add sign-up confirmation-code step (self-signup accounts stay `UNCONFIRMED` until the emailed code is submitted — see `infrastructure.md`)
+- [x] Fix email-uniqueness gap found via manual testing: switched Cognito to use email as the `UsernameAttribute` (not an alias) so it's enforced unique at sign-up, not just at confirmation — see `infrastructure.md` for the full story (required a pool replacement, since `UsernameAttributes` is immutable)
+- [x] Build protected-route wrapper (`ProtectedRoute` gates `/dashboard`, `/profile`, `/log-types/*` for logged-out users; `PublicOnlyRoute` gates `/`, `/signup`, `/login` for logged-in users — found via manual testing that only the first direction was covered initially)
+- [x] Build "Log Type Builder" form (dynamically add fields: name + type)
+- [x] Wire builder to `POST /log-types` (uncovered and fixed a missing CORS config on the Lambda Function URL in the process — see `infrastructure.md`)
+- [x] Build "My Log Types" list view (`GET /log-types`)
+- [x] Add profile info display (email + display name) to the `/profile` stub, via a new `getUserAttributes()` in `AuthContext`
 
 ## Day 5 — Frontend Development (views) + Integration
 
