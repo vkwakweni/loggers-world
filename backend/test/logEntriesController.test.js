@@ -8,7 +8,7 @@ const logEntriesController = require('../controllers/logEntriesController');
 const { createMockRes } = require('../test-support/helpers');
 
 const SCHEMA_FIELDS = [
-  { name: 'exercise', type: 'string', required: true },
+  { name: 'exercise', type: 'text', required: true },
   { name: 'reps', type: 'number', required: false },
 ];
 
@@ -52,6 +52,19 @@ test('createLogEntry: entryFields failing schema validation responds 400', async
   assert.equal(sendMock.mock.callCount(), 1, 'PutCommand should not be reached');
   assert.equal(res.statusCode, 400);
   assert.equal(res.body.error, 'missing required field "exercise"');
+});
+
+test('createLogEntry: wrong-typed text field responds 400', async (t) => {
+  const sendMock = mockLogTypeThenCommand(t, 'PutCommand', {});
+
+  const req = { ownerId: 'owner-1', params: { typeId: 'type-1' }, body: { fields: { exercise: 123 } } };
+  const res = createMockRes();
+
+  await logEntriesController.createLogEntry(req, res);
+
+  assert.equal(sendMock.mock.callCount(), 1, 'PutCommand should not be reached');
+  assert.equal(res.statusCode, 400);
+  assert.equal(res.body.error, 'field "exercise" must be a string');
 });
 
 test('createLogEntry: valid payload writes item and responds 201', async (t) => {
