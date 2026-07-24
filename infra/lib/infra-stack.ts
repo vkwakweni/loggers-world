@@ -16,14 +16,14 @@ export class InfraStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    const userPool = new cognito.UserPool(this, 'LoggersWorldUserPool', {
+    const userPool = new cognito.UserPool(this, 'LoggersWorldUserPoolV2', {
       selfSignUpEnabled: true,
-      signInAliases: { email: true, username: true },
+      signInAliases: { email: true },
       autoVerify: { email: true },
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    const userPoolClient = new cognito.UserPoolClient(this, 'LoggersWorldUserPoolClient', {
+    const userPoolClient = new cognito.UserPoolClient(this, 'LoggersWorldUserPoolClientV2', {
       userPool,
       generateSecret: false,
       authFlows: { userSrp: true },
@@ -43,13 +43,31 @@ export class InfraStack extends cdk.Stack {
     // least-privilege: read/write on this table's ARN only, not "*"
     table.grantReadWriteData(backendFunction);
 
+    const frontendOrigin = process.env.FRONTEND_ORIGIN;
+    if (!frontendOrigin) {
+      throw new Error('FRONTEND_ORIGIN is not set (see infra/.env.example)');
+    }
+
     const backendFunctionUrl = backendFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedOrigins: [frontendOrigin],
+        allowedMethods: [lambda.HttpMethod.ALL],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+      },
     });
 
     // printed after `cdk deploy` and shown in the CloudFormation console, so the URL doesn't need to be hunted down manually in the Lambda console
     new cdk.CfnOutput(this, 'BackendFunctionUrlOutput', {
       value: backendFunctionUrl.url,
+    });
+
+    new cdk.CfnOutput(this, 'UserPoolIdOutput', {
+      value: userPool.userPoolId,
+    });
+
+    new cdk.CfnOutput(this, 'UserPoolClientIdOutput', {
+      value: userPoolClient.userPoolClientId,
     });
   }
 }
