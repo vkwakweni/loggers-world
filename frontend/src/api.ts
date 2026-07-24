@@ -13,6 +13,14 @@ export interface LogType {
   fields: LogTypeField[]
 }
 
+export interface LogEntry {
+  entryId: string
+  typeId: string
+  ownerId: string
+  fields: Record<string, string | number>
+  createdAt: string
+}
+
 const baseUrl = import.meta.env.VITE_FUNCTION_URL
 
 async function apiFetch(path: string, accessToken: string, options: RequestInit = {}) {
@@ -46,4 +54,19 @@ export function createLogType(
 
 export function listLogTypes(accessToken: string): Promise<LogType[]> {
   return apiFetch('/log-types', accessToken)
+}
+
+export function getLogType(accessToken: string, typeId: string): Promise<LogType> {
+  return apiFetch(`/log-types/${typeId}`, accessToken)
+}
+
+export function createLogEntry(
+  accessToken: string,
+  typeId: string,
+  fields: Record<string, string | number>,
+): Promise<LogEntry> {
+  return apiFetch(`/log-types/${typeId}/entries`, accessToken, {
+    method: 'POST',
+    body: JSON.stringify({ fields }),
+  })
 }
