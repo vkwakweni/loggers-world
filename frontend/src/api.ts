@@ -60,6 +60,10 @@ export function getLogType(accessToken: string, typeId: string): Promise<LogType
   return apiFetch(`/log-types/${typeId}`, accessToken)
 }
 
+export function listLogEntries(accessToken: string, typeId: string): Promise<LogEntry[]> {
+  return apiFetch(`/log-types/${typeId}/entries`, accessToken)
+}
+
 export function createLogEntry(
   accessToken: string,
   typeId: string,

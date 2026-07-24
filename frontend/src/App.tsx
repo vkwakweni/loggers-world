@@ -50,7 +50,7 @@ function App() {
           <Route path="/log-types/new" element={<LogTypeBuilder />} />
           <Route path="/log-types/:typeId" element={<LogTypeEntries />} />
           <Route path="/log-types/:typeId/entries/new" element={<CreateEntry />} />
-          <Route path="/log-types/:typeId/entries/:entryId/edit" element={<EditEntry />} />
+          <Route path="/log-types/:typeId/entries/:createdAt/edit" element={<EditEntry />} />
         </Route>
       </Routes>
     </BrowserRouter>
