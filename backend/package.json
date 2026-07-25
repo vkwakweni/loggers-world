@@ -18,6 +18,7 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "amazon-cognito-identity-js": "^6.3.20"
+    "amazon-cognito-identity-js": "^6.3.20",
+    "supertest": "^7.2.2"
   }
 }
