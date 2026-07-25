@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
+import { Pencil, Trash2, Plus } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
 import { getLogType, listLogEntries, deleteLogEntry, type LogType, type LogEntry } from '../api'
+import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 
 function LogTypeEntries() {
   const { typeId } = useParams<{ typeId: string }>()
@@ -48,17 +50,19 @@ function LogTypeEntries() {
     }
   }
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p role="alert">{error}</p>
+  if (loading) return <LoadingMessage />
+  if (error) return <ErrorMessage>{error}</ErrorMessage>
   if (!logType || !typeId) return null
 
   return (
-    <div>
+    <div className="page wide">
       <h1>{logType.name} Entries</h1>
-      <Link to={`/log-types/${typeId}/entries/new`}>Add entry</Link>
+      <Link to={`/log-types/${typeId}/entries/new`} className="btn btn-primary">
+        <Plus size={16} aria-hidden="true" /> Add entry
+      </Link>
 
       {entries.length === 0 ? (
-        <p>No entries yet.</p>
+        <p className="empty-state">No entries yet.</p>
       ) : (
         <table>
           <thead>
@@ -78,12 +82,12 @@ function LogTypeEntries() {
                 ))}
                 <td>
                   <Link to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}>
-                    Edit
+                    <Pencil size={16} aria-hidden="true" /> Edit
                   </Link>
                 </td>
                 <td>
-                  <button type="button" onClick={() => handleDelete(entry)}>
-                    Delete
+                  <button type="button" className="btn-danger" onClick={() => handleDelete(entry)}>
+                    <Trash2 size={16} aria-hidden="true" /> Delete
                   </button>
                 </td>
               </tr>

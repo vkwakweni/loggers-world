@@ -2,6 +2,7 @@ import { useEffect, useState, type SubmitEvent } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import { getLogType, listLogEntries, updateLogEntry, type LogType, type LogEntry } from '../api'
+import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 
 function EditEntry() {
   const { typeId, createdAt } = useParams<{ typeId: string; createdAt: string }>()
@@ -73,8 +74,8 @@ function EditEntry() {
     }
   }
 
-  if (loading) return <p>Loading...</p>
-  if (error && !logType) return <p role="alert">{error}</p>
+  if (loading) return <LoadingMessage />
+  if (error && !logType) return <ErrorMessage>{error}</ErrorMessage>
   if (!logType) return null
 
   return (
@@ -82,20 +83,17 @@ function EditEntry() {
       <h1>Edit {logType.name} Entry</h1>
       <form onSubmit={handleSubmit}>
         {logType.fields.map((field) => (
-          <div key={field.name}>
-            <label>
-              {field.name}:{' '}
-              <input
-                type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
-                value={values[field.name] ?? ''}
-                onChange={(e) => updateValue(field.name, e.target.value)}
-                required={field.required}
-              />
-            </label>
-          </div>
+          <label key={field.name}>
+            {field.name}:
+            <input
+              type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
+              value={values[field.name] ?? ''}
+              onChange={(e) => updateValue(field.name, e.target.value)}
+              required={field.required}
+            />
+          </label>
         ))}
-        <br></br>
-        {error && <p role="alert">{error}</p>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <button type="submit" disabled={submitting}>
           {submitting ? 'Saving...' : 'Save'}
         </button>

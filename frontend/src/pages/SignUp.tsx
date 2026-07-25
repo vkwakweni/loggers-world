@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from 'react'
 import { useNavigate, Link } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
+import { ErrorMessage, Notice } from '../components/StatusMessage'
 
 function SignUp() {
   const { signUp, confirmSignUp, resendConfirmationCode } = useAuth()
@@ -62,9 +63,8 @@ function SignUp() {
           <label>
             Confirmation code: <input type="text" value={code} onChange={(e) => setCode(e.target.value)} required />
           </label>
-          {error && <p role="alert">{error}</p>}
-          {notice && <p>{notice}</p>}
-          <br></br><br></br>
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {notice && <Notice>{notice}</Notice>}
           <button type="submit">Confirm</button>
         </form>
         <p>
@@ -81,17 +81,14 @@ function SignUp() {
         <label>
           Email: <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
-        <br></br>
         <label>
           Display name: <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
         </label>
-        <br></br>
         <label>
           Password: <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
-        <br></br>
         <label>
-          Confirm password: {/* TODO get space represention */}
+          Confirm password:
           <input
             type="password"
             value={confirmPassword}
@@ -99,8 +96,7 @@ function SignUp() {
             required
           />
         </label>
-        {error && <p role="alert">{error}</p>}
-        <br></br><br></br>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <button type="submit">Create account</button>
       </form>
       <p>
