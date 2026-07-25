@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from 'react'
 import { useNavigate, Link } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
+import { ErrorMessage } from '../components/StatusMessage'
 
 function Login() {
   const { signIn } = useAuth()
@@ -27,12 +28,10 @@ function Login() {
         <label>
           Email: <input type="email" value={username} onChange={(e) => setUsername(e.target.value)} required />
         </label>
-        <br></br>
         <label>
           Password: <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
-        {error && <p role="alert">{error}</p>}
-        <br></br>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <button type="submit">Log in</button>
       </form>
       <p>

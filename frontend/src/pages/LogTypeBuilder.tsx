@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import { createLogType, type FieldType, type LogTypeField } from '../api'
+import { ErrorMessage } from '../components/StatusMessage'
 
 const FIELD_TYPES: FieldType[] = ['text', 'number', 'date']
 
@@ -63,21 +64,20 @@ function LogTypeBuilder() {
         <label>
           Name: <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
         </label>
-        <br></br><br></br>
 
         {fields.map((field, index) => (
-          <div key={index}>
+          <div key={index} className="field-row">
             <label>
-              Field name:{' '}
+              Field name:
               <input
                 type="text"
                 value={field.name}
                 onChange={(e) => updateField(index, { name: e.target.value })}
                 required
               />
-            </label>{' '}
+            </label>
             <label>
-              Type:{' '}
+              Type:
               <select
                 value={field.type}
                 onChange={(e) => updateField(index, { type: e.target.value as FieldType })}
@@ -88,28 +88,31 @@ function LogTypeBuilder() {
                   </option>
                 ))}
               </select>
-            </label>{' '}
+            </label>
             <label>
-              Required:{' '}
+              Required:
               <input
                 type="checkbox"
                 checked={field.required}
                 onChange={(e) => updateField(index, { required: e.target.checked })}
               />
-            </label>{' '}
-            <button type="button" onClick={() => removeField(index)} disabled={fields.length === 1}>
+            </label>
+            <button
+              type="button"
+              className="btn-danger"
+              onClick={() => removeField(index)}
+              disabled={fields.length === 1}
+            >
               Remove
             </button>
           </div>
         ))}
 
-        <br></br>
         <button type="button" onClick={addField}>
           Add field
         </button>
-        <br></br><br></br>
 
-        {error && <p role="alert">{error}</p>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <button type="submit" disabled={submitting}>
           {submitting ? 'Creating...' : 'Add type'}
         </button>

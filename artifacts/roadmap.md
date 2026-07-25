@@ -62,14 +62,18 @@ last-updated: 2026-07-18
 
 ## Day 5 — Frontend Development (views) + Integration
 
-- [ ] Build dynamic "Add Entry" form that renders inputs from the selected `LogType`'s fields
-- [ ] Wire to `POST /log-types/:typeId/entries`
-- [ ] Build entry list/table view per log type (`GET /log-types/:typeId/entries`), sorted chronologically via the base table's sort key (newest-first), with per-row Edit/Delete actions
-- [ ] Build "Edit Entry" form (pre-filled), wired to `PATCH /log-types/:typeId/entries/:createdAt`
-- [ ] Wire delete action (with confirmation) to `DELETE /log-types/:typeId/entries/:createdAt`
-- [ ] Basic layout/styling (nav, dashboard shell)
-- [ ] Full manual walkthrough: sign up → create log type → add entries → view list → edit entry → delete entry
-- [ ] Fix integration bugs (CORS, auth headers, field-validation mismatches)
+- [x] Fix backend validation gap in `validateFieldsAgainstSchema` (`logEntriesController.js`)
+    - Only checks `field.type === 'number' | 'string' | 'boolean'`, but actual `LogType` field types are `'text' | 'number' | 'date'` (per `data-models.md`)
+    - `text` and `date` fields currently get no server-side type-checking at all — only `number` does
+    - Found while building the Add Entry form
+- [x] Build dynamic "Add Entry" form that renders inputs from the selected `LogType`'s fields
+- [x] Wire to `POST /log-types/:typeId/entries`
+- [x] Build entry list/table view per log type (`GET /log-types/:typeId/entries`), sorted chronologically via the base table's sort key (newest-first), with per-row Edit/Delete actions
+- [x] Build "Edit Entry" form (pre-filled), wired to `PATCH /log-types/:typeId/entries/:createdAt`
+- [x] Wire delete action (with confirmation) to `DELETE /log-types/:typeId/entries/:createdAt`
+- [x] Basic layout/styling (nav, dashboard shell) — see `design-system.md`
+- [x] Full manual walkthrough: sign up → create log type → add entries → view list → edit entry → delete entry
+- [x] Fix integration bugs (CORS, auth headers, field-validation mismatches)
 
 ## Day 6 — Testing & CI/CD
 
@@ -97,3 +101,6 @@ last-updated: 2026-07-18
 - `LogType` editing (rename/add/remove fields): not in this week's scope since only creation is planned, but once editing exists, existing `LogEntry` items won't retroactively match the updated `fields` list — needs a strategy (e.g. migrate old entries, or tolerate/display drifted fields gracefully)
 - `LogType` deletion: same underlying problem as editing above, just sharper — deleting a `LogType` that still has `LogEntry` items pointing at it orphans them (no `fields` schema left to validate/render against). Needs a decision before implementing: cascade-delete all its entries, block deletion while entries exist, or soft-delete the type instead
 - Entry filtering: let the user narrow the entry list by field value or date range, beyond the default chronological view shipped in Day 5
+- Entry table cell overflow: long field values currently wrap/stretch the row instead of truncating; cap column width and truncate with an ellipsis (`text-overflow: ellipsis`), ideally with the full value visible on hover/title — found during the Day 5 manual walkthrough
+- Account deletion: no way for a user to delete their own account today. Needs a decision on scope similar to `LogType` deletion above — does it cascade-delete all owned `LogType`/`LogEntry` items, or just deregister the Cognito user and leave orphaned data?
+- Updating account details: `/profile` is currently read-only (email + display name display, per the Day-4 stub comment in `Profile.tsx`) — no way to change display name, email, or password from the UI

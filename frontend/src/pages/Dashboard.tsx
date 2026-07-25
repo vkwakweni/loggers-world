@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { Plus } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
 import { listLogTypes, type LogType } from '../api'
+import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 
 function Dashboard() {
   const { getAccessToken } = useAuth()
@@ -25,15 +27,16 @@ function Dashboard() {
   }, [getAccessToken])
 
   return (
-    <div>
+    <div className="page wide">
       <h1>Dashboard</h1>
-      <Link to="/profile">Profile</Link>
       <section>
         <h2>My Log Types</h2>
-        <Link to="/log-types/new">New Log Type</Link>
-        {loading && <p>Loading...</p>}
-        {error && <p role="alert">{error}</p>}
-        {!loading && !error && logTypes.length === 0 && <p>No log types yet.</p>}
+        <Link to="/log-types/new" className="btn btn-primary">
+          <Plus size={16} aria-hidden="true" /> New Log Type
+        </Link>
+        {loading && <LoadingMessage />}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
+        {!loading && !error && logTypes.length === 0 && <p className="empty-state">No log types yet.</p>}
         <ul>
           {logTypes.map((logType) => (
             <li key={logType.typeId}>
@@ -41,9 +44,6 @@ function Dashboard() {
             </li>
           ))}
         </ul>
-      </section>
-      <section>
-        <h2>My Log Entries</h2>
       </section>
     </div>
   )

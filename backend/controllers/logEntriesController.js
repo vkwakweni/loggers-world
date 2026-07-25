@@ -25,11 +25,8 @@ function validateFieldsAgainstSchema(entryFields, schemaFields) {
     if (field.type === 'number' && typeof value !== 'number') {
       return `field "${field.name}" must be a number`;
     }
-    if (field.type === 'string' && typeof value !== 'string') {
+    if ((field.type === 'text' || field.type === 'date') && typeof value !== 'string') {
       return `field "${field.name}" must be a string`;
-    }
-    if (field.type === 'boolean' && typeof value !== 'boolean') {
-      return `field "${field.name}" must be a boolean`;
     }
   }
   return null;
