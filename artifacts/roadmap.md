@@ -62,14 +62,18 @@ last-updated: 2026-07-18
 
 ## Day 5 — Frontend Development (views) + Integration
 
-- [ ] Build dynamic "Add Entry" form that renders inputs from the selected `LogType`'s fields
-- [ ] Wire to `POST /log-types/:typeId/entries`
-- [ ] Build entry list/table view per log type (`GET /log-types/:typeId/entries`), sorted chronologically via the base table's sort key (newest-first), with per-row Edit/Delete actions
-- [ ] Build "Edit Entry" form (pre-filled), wired to `PATCH /log-types/:typeId/entries/:createdAt`
-- [ ] Wire delete action (with confirmation) to `DELETE /log-types/:typeId/entries/:createdAt`
+- [x] Fix backend validation gap in `validateFieldsAgainstSchema` (`logEntriesController.js`)
+    - Only checks `field.type === 'number' | 'string' | 'boolean'`, but actual `LogType` field types are `'text' | 'number' | 'date'` (per `data-models.md`)
+    - `text` and `date` fields currently get no server-side type-checking at all — only `number` does
+    - Found while building the Add Entry form
+- [x] Build dynamic "Add Entry" form that renders inputs from the selected `LogType`'s fields
+- [x] Wire to `POST /log-types/:typeId/entries`
+- [x] Build entry list/table view per log type (`GET /log-types/:typeId/entries`), sorted chronologically via the base table's sort key (newest-first), with per-row Edit/Delete actions
+- [x] Build "Edit Entry" form (pre-filled), wired to `PATCH /log-types/:typeId/entries/:createdAt`
+- [x] Wire delete action (with confirmation) to `DELETE /log-types/:typeId/entries/:createdAt`
 - [ ] Basic layout/styling (nav, dashboard shell)
 - [ ] Full manual walkthrough: sign up → create log type → add entries → view list → edit entry → delete entry
-- [ ] Fix integration bugs (CORS, auth headers, field-validation mismatches)
+- [x] Fix integration bugs (CORS, auth headers, field-validation mismatches)
 
 ## Day 6 — Testing & CI/CD
 

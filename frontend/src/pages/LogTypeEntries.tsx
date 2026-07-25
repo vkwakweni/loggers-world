@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
-import { getLogType, listLogEntries, type LogType, type LogEntry } from '../api'
+import { getLogType, listLogEntries, deleteLogEntry, type LogType, type LogEntry } from '../api'
 
 function LogTypeEntries() {
   const { typeId } = useParams<{ typeId: string }>()
@@ -32,6 +32,21 @@ function LogTypeEntries() {
     }
     load()
   }, [getAccessToken, typeId])
+
+  async function handleDelete(entry: LogEntry) {
+    if (!typeId) return
+    if (!confirm('Delete this entry? This action cannot be undone.')) return
+
+    try {
+      const accessToken = await getAccessToken()
+      if (!accessToken) throw new Error('Not signed in')
+
+      await deleteLogEntry(accessToken, typeId, entry.createdAt)
+      setEntries((prev) => prev.filter((e) => e.entryId !== entry.entryId))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not delete entry')
+    }
+  }
 
   if (loading) return <p>Loading...</p>
   if (error) return <p role="alert">{error}</p>
@@ -67,7 +82,9 @@ function LogTypeEntries() {
                   </Link>
                 </td>
                 <td>
-                  <button type="button">Delete</button>
+                  <button type="button" onClick={() => handleDelete(entry)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
