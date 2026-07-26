@@ -81,7 +81,7 @@ last-updated: 2026-07-18
 - [x] Basic frontend tests if time allows (render, form submit)
 - [x] GitHub Actions workflow: lint → test → `cdk deploy` on merge to `main`
 - [x] Amplify Hosting build config triggered from GitHub
-- [ ] Run full pipeline once end-to-end; fix CI failures
+- [x] Run full pipeline once end-to-end; fix CI failures
 - [ ] UX polish: loading states, error messages, empty states
 
 ## Day 7 — Deployment & Documentation
