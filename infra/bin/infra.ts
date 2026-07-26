@@ -2,6 +2,7 @@
 import 'dotenv/config';
 import * as cdk from 'aws-cdk-lib/core';
 import { InfraStack } from '../lib/infra-stack';
+import { GithubOidcStack } from '../lib/github-oidc-stack';
 
 const app = new cdk.App();
 new InfraStack(app, 'InfraStack', {
@@ -18,4 +19,10 @@ new InfraStack(app, 'InfraStack', {
   // env: { account: '123456789012', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+});
+
+// Needs a concrete account/region to build the CDK bootstrap role ARNs it
+// grants sts:AssumeRole on; deployed manually/once, not via CI.
+new GithubOidcStack(app, 'GithubOidcStack', {
+  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
 });
