@@ -22,8 +22,15 @@ export class GithubOidcStack extends cdk.Stack {
           'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
         },
         StringLike: {
-          // only the main branch (i.e. a merge/push to main) can assume this role
-          'token.actions.githubusercontent.com:sub': `repo:${GITHUB_REPO}:ref:refs/heads/main`,
+          // only the main branch (i.e. a merge/push to main) can assume this role.
+          // GitHub's sub claim sometimes appends immutable owner/repo IDs after a
+          // literal "@" (e.g. "owner@123/repo@456"). The wildcard only expands
+          // after that literal "@", which real GitHub names can never contain
+          // themselves, so a look-alike account/repo name can't match this.
+          'token.actions.githubusercontent.com:sub': [
+            `repo:${GITHUB_REPO}:ref:refs/heads/main`,
+            `repo:${GITHUB_REPO.replace('/', '@*/')}@*:ref:refs/heads/main`,
+          ],
         },
       }),
       maxSessionDuration: cdk.Duration.hours(1),
