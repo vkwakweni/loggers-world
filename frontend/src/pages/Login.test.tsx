@@ -25,7 +25,7 @@ describe('Login', () => {
     )
 
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/password/i, { selector: 'input' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument()
   })
 
@@ -40,7 +40,7 @@ describe('Login', () => {
     )
 
     await user.type(screen.getByLabelText(/email/i), 'test@example.com')
-    await user.type(screen.getByLabelText(/password/i), 'hunter2')
+    await user.type(screen.getByLabelText(/password/i, { selector: 'input' }), 'hunter2')
     await user.click(screen.getByRole('button', { name: /log in/i }))
 
     expect(signIn).toHaveBeenCalledWith('test@example.com', 'hunter2')
@@ -58,7 +58,7 @@ describe('Login', () => {
     )
 
     await user.type(screen.getByLabelText(/email/i), 'test@example.com')
-    await user.type(screen.getByLabelText(/password/i), 'wrong')
+    await user.type(screen.getByLabelText(/password/i, { selector: 'input' }), 'wrong')
     await user.click(screen.getByRole('button', { name: /log in/i }))
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Incorrect username or password.')

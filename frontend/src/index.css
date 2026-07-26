@@ -441,6 +441,31 @@ input[type='checkbox'] {
   width: auto;
 }
 
+.password-field {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 36px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border: none;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
 .field-row {
   display: flex;
   flex-wrap: wrap;

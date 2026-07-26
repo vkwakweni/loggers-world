@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react'
 import { useNavigate, Link } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import { ErrorMessage, Notice } from '../components/StatusMessage'
+import PasswordInput from '../components/PasswordInput'
 
 function SignUp() {
   const { signUp, confirmSignUp, resendConfirmationCode } = useAuth()
@@ -79,20 +80,33 @@ function SignUp() {
       <h1>Create Account</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          Email: <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          Email:{' '}
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
+            required
+          />
         </label>
         <label>
           Display name: <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
         </label>
         <label>
-          Password: <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          Password:{' '}
+          <PasswordInput
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+            required
+          />
         </label>
         <label>
           Confirm password:
-          <input
-            type="password"
+          <PasswordInput
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            autoComplete="new-password"
             required
           />
         </label>

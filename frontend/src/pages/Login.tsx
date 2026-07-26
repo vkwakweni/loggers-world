@@ -2,6 +2,7 @@ import { useState, type SubmitEvent } from 'react'
 import { useNavigate, Link } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import { ErrorMessage } from '../components/StatusMessage'
+import PasswordInput from '../components/PasswordInput'
 
 function Login() {
   const { signIn } = useAuth()
@@ -26,10 +27,23 @@ function Login() {
       <h1>Log In</h1>
       <form onSubmit={handleSubmit}>
         <label>
-          Email: <input type="email" value={username} onChange={(e) => setUsername(e.target.value)} required />
+          Email:{' '}
+          <input
+            type="email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+            required
+          />
         </label>
         <label>
-          Password: <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          Password:{' '}
+          <PasswordInput
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+          />
         </label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <button type="submit">Log in</button>
