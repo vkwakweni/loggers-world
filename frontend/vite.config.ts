@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -9,5 +10,9 @@ export default defineConfig({
     // dependency); Vite doesn't polyfill Node globals like webpack does,
     // so alias it to the browser's globalThis.
     global: 'globalThis',
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
   },
 })

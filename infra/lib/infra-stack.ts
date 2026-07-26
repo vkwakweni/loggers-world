@@ -47,11 +47,14 @@ export class InfraStack extends cdk.Stack {
     if (!frontendOrigin) {
       throw new Error('FRONTEND_ORIGIN is not set (see infra/.env.example)');
     }
+    // comma-separated so local dev (http://localhost:5173) and the deployed
+    // Amplify frontend can both call this same Lambda Function URL
+    const allowedOrigins = frontendOrigin.split(',').map((origin) => origin.trim());
 
     const backendFunctionUrl = backendFunction.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.NONE,
       cors: {
-        allowedOrigins: [frontendOrigin],
+        allowedOrigins,
         allowedMethods: [lambda.HttpMethod.ALL],
         allowedHeaders: ['Content-Type', 'Authorization'],
       },

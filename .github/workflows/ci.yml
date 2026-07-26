@@ -1,0 +1,60 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+            infra/package-lock.json
+
+      - run: npm ci --prefix backend
+      - run: npm test --prefix backend
+
+      - run: npm ci --prefix frontend
+      - run: npm run lint --prefix frontend
+      - run: npm test --prefix frontend
+
+      - run: npm ci --prefix infra
+      - run: npm test --prefix infra
+
+  deploy:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infra/package-lock.json
+
+      - run: npm ci --prefix infra
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::300052334965:role/github-actions-loggers-world-deploy
+          aws-region: af-south-1
+
+      - run: npx cdk deploy InfraStack --require-approval never
+        working-directory: infra
+        env:
+          FRONTEND_ORIGIN: ${{ vars.FRONTEND_ORIGIN }}

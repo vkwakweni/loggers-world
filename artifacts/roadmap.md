@@ -77,10 +77,10 @@ last-updated: 2026-07-18
 
 ## Day 6 — Testing & CI/CD
 
-- [ ] Integration tests for core flow (create type → create entry → fetch → edit → delete)
-- [ ] Basic frontend tests if time allows (render, form submit)
-- [ ] GitHub Actions workflow: lint → test → `cdk deploy` on merge to `main`
-- [ ] Amplify Hosting build config triggered from GitHub
+- [x] Integration tests for core flow (create type → create entry → fetch → edit → delete)
+- [x] Basic frontend tests if time allows (render, form submit)
+- [x] GitHub Actions workflow: lint → test → `cdk deploy` on merge to `main`
+- [x] Amplify Hosting build config triggered from GitHub
 - [ ] Run full pipeline once end-to-end; fix CI failures
 - [ ] UX polish: loading states, error messages, empty states
 
