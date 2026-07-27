@@ -13,6 +13,7 @@ function LogTypeEntries() {
   const [entries, setEntries] = useState<LogEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -39,6 +40,7 @@ function LogTypeEntries() {
     if (!typeId) return
     if (!confirm('Delete this entry? This action cannot be undone.')) return
 
+    setDeleteError(null)
     try {
       const accessToken = await getAccessToken()
       if (!accessToken) throw new Error('Not signed in')
@@ -46,7 +48,7 @@ function LogTypeEntries() {
       await deleteLogEntry(accessToken, typeId, entry.createdAt)
       setEntries((prev) => prev.filter((e) => e.entryId !== entry.entryId))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not delete entry')
+      setDeleteError(err instanceof Error ? err.message : 'Could not delete entry')
     }
   }
 
@@ -60,6 +62,8 @@ function LogTypeEntries() {
       <Link to={`/log-types/${typeId}/entries/new`} className="btn btn-primary">
         <Plus size={16} aria-hidden="true" /> Add entry
       </Link>
+
+      {deleteError && <ErrorMessage>{deleteError}</ErrorMessage>}
 
       {entries.length === 0 ? (
         <p className="empty-state">No entries yet.</p>
