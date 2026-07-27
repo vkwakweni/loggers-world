@@ -104,3 +104,5 @@ last-updated: 2026-07-18
 - Entry table cell overflow: long field values currently wrap/stretch the row instead of truncating; cap column width and truncate with an ellipsis (`text-overflow: ellipsis`), ideally with the full value visible on hover/title — found during the Day 5 manual walkthrough
 - Account deletion: no way for a user to delete their own account today. Needs a decision on scope similar to `LogType` deletion above — does it cascade-delete all owned `LogType`/`LogEntry` items, or just deregister the Cognito user and leave orphaned data?
 - Updating account details: `/profile` is currently read-only (email + display name display, per the Day-4 stub comment in `Profile.tsx`) — no way to change display name, email, or password from the UI
+- Session expiry: log in should expire after 2 weeks of inactivity, rather than staying valid indefinitely — needs a decision on mechanism (Cognito refresh token TTL config vs. client-side inactivity tracking)
+- Date entry format: change to dd/mm/yyyy. Currently input is mm/dd/yyyy (only the input, not the display) and display is yyyy-mm-dd
