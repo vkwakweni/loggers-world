@@ -88,8 +88,8 @@ last-updated: 2026-07-18
 
 - [x] Final production deploy (CDK stack + Amplify frontend)
 - [x] Smoke test production (auth + create/read flows)
-- [ ] Write README: architecture diagram, setup steps, live demo link
-- [ ] Record short demo GIF/video for portfolio
+- [x] Write README: architecture diagram, setup steps, live demo link
+- [x] Record short demo GIF/video for portfolio
 - [ ] Write retro notes: challenges, what you'd change, resume bullet points
 - [ ] Tag a `v1.0` release
 
