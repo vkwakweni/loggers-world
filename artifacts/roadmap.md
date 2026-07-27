@@ -86,7 +86,7 @@ last-updated: 2026-07-18
 
 ## Day 7 — Deployment & Documentation
 
-- [ ] Final production deploy (CDK stack + Amplify frontend)
+- [x] Final production deploy (CDK stack + Amplify frontend)
 - [ ] Smoke test production (auth + create/read flows)
 - [ ] Write README: architecture diagram, setup steps, live demo link
 - [ ] Record short demo GIF/video for portfolio
