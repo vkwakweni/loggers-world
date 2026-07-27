@@ -45,9 +45,15 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: infra/package-lock.json
+          cache-dependency-path: |
+            backend/package-lock.json
+            infra/package-lock.json
 
       - run: npm ci --prefix infra
+
+      # cdk deploy zips up backend/ as-is for the Lambda asset, so its
+      # dependencies must be installed here too, not just infra's
+      - run: npm ci --prefix backend
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
