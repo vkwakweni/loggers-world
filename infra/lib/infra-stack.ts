@@ -13,14 +13,14 @@ export class InfraStack extends cdk.Stack {
       partitionKey: { name: 'PK', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'SK', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
     const userPool = new cognito.UserPool(this, 'LoggersWorldUserPoolV2', {
       selfSignUpEnabled: true,
       signInAliases: { email: true },
       autoVerify: { email: true },
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
 
     const userPoolClient = new cognito.UserPoolClient(this, 'LoggersWorldUserPoolClientV2', {

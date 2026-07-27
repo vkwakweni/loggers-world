@@ -95,7 +95,7 @@ last-updated: 2026-07-18
 
 ## Later / Further Development
 
-- DynamoDB table's `removalPolicy` is set to `DESTROY` (table + data deleted with the stack) for dev-time convenience — before a real production deploy (Day 7), reconsider switching to `RETAIN` so a stack teardown can't silently wipe user data
+- ~~DynamoDB table's `removalPolicy` is set to `DESTROY`~~ — resolved on Day 7: both the table and the Cognito user pool switched to `RETAIN` so a stack teardown can't silently wipe user data; pool was also cleared of leftover test users before the production deploy
 - Dedicated timeline view: a cross-entry chronological display (distinct from the per-log-type list), possibly with date grouping/visual density beyond a plain table
 - Client-side sort toggle: let the user re-sort the entry list by any field (not just chronological), on top of the free DynamoDB-order sort shipped in Day 5
 - `LogType` editing (rename/add/remove fields): not in this week's scope since only creation is planned, but once editing exists, existing `LogEntry` items won't retroactively match the updated `fields` list — needs a strategy (e.g. migrate old entries, or tolerate/display drifted fields gracefully)
