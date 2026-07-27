@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { LogOut } from 'lucide-react'
 import { useAuth, type UserAttributes } from '../auth/AuthContext'
-import { ErrorMessage } from '../components/StatusMessage'
+import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 
 // Stub: full profile screen (editing, etc.) is out of scope for now.
 // Currently just shows account info + sign-out, per the wireframe's [Profile] element.
@@ -11,11 +11,13 @@ function Profile() {
   const navigate = useNavigate()
   const [attributes, setAttributes] = useState<UserAttributes | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getUserAttributes()
       .then(setAttributes)
       .catch((err) => setError(err instanceof Error ? err.message : 'Could not load profile'))
+      .finally(() => setLoading(false))
   }, [getUserAttributes])
 
   function handleSignOut() {
@@ -26,6 +28,7 @@ function Profile() {
   return (
     <div className="page">
       <h1>Profile</h1>
+      {loading && <LoadingMessage />}
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {attributes && (
         <dl className="profile-attrs">
