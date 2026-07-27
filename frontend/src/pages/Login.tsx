@@ -10,15 +10,19 @@ function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
     setError(null)
+    setSubmitting(true)
     try {
       await signIn(username, password)
       navigate('/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Log in failed')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -46,7 +50,9 @@ function Login() {
           />
         </label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        <button type="submit">Log in</button>
+        <button type="submit" disabled={submitting}>
+          {submitting ? 'Logging in...' : 'Log in'}
+        </button>
       </form>
       <p>
         Don't have an account? <Link to="/signup">Sign up</Link>

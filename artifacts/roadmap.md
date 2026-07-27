@@ -82,7 +82,7 @@ last-updated: 2026-07-18
 - [x] GitHub Actions workflow: lint → test → `cdk deploy` on merge to `main`
 - [x] Amplify Hosting build config triggered from GitHub
 - [x] Run full pipeline once end-to-end; fix CI failures
-- [ ] UX polish: loading states, error messages, empty states
+- [x] UX polish: loading states, error messages, empty states
 
 ## Day 7 — Deployment & Documentation
 
@@ -105,4 +105,5 @@ last-updated: 2026-07-18
 - Account deletion: no way for a user to delete their own account today. Needs a decision on scope similar to `LogType` deletion above — does it cascade-delete all owned `LogType`/`LogEntry` items, or just deregister the Cognito user and leave orphaned data?
 - Updating account details: `/profile` is currently read-only (email + display name display, per the Day-4 stub comment in `Profile.tsx`) — no way to change display name, email, or password from the UI
 - Session expiry: log in should expire after 2 weeks of inactivity, rather than staying valid indefinitely — needs a decision on mechanism (Cognito refresh token TTL config vs. client-side inactivity tracking)
+- Mobile view: do a general pass on the app in phone-width viewports (no dedicated responsive review has been done yet)
 - Date entry format: change to dd/mm/yyyy. Currently input is mm/dd/yyyy (only the input, not the display) and display is yyyy-mm-dd

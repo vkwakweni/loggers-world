@@ -15,6 +15,7 @@ function SignUp() {
   const [stage, setStage] = useState<'form' | 'confirm'>('form')
   const [error, setError] = useState<string | null>(null)
   const [notice, setNotice] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault()
@@ -25,22 +26,28 @@ function SignUp() {
       return
     }
 
+    setSubmitting(true)
     try {
       await signUp(email, displayName, password)
       setStage('confirm')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign up failed')
+    } finally {
+      setSubmitting(false)
     }
   }
 
   async function handleConfirm(e: SubmitEvent) {
     e.preventDefault()
     setError(null)
+    setSubmitting(true)
     try {
       await confirmSignUp(email, code)
       navigate('/login')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Confirmation failed')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -66,7 +73,9 @@ function SignUp() {
           </label>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           {notice && <Notice>{notice}</Notice>}
-          <button type="submit">Confirm</button>
+          <button type="submit" disabled={submitting}>
+            {submitting ? 'Confirming...' : 'Confirm'}
+          </button>
         </form>
         <p>
           Didn't get a code? <button type="button" onClick={handleResend}>Resend code</button>
@@ -111,7 +120,9 @@ function SignUp() {
           />
         </label>
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        <button type="submit">Create account</button>
+        <button type="submit" disabled={submitting}>
+          {submitting ? 'Creating account...' : 'Create account'}
+        </button>
       </form>
       <p>
         Already have an account? <Link to="/login">Log in</Link>
