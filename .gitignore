@@ -32,5 +32,9 @@ Thumbs.db
 # Personal setup notes
 artifacts/aws-setup.md
 
+# drawio source + autosave backups (exported .svg/.png are tracked instead)
+*.drawio
+.$*.bkp
+
 # Local dev-only scripts (not part of the app)
 backend/scripts/
