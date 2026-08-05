@@ -56,7 +56,7 @@ LogType deletion and Account deletion — and adds a new archiving feature.
 - [x] Frontend: `AuthContext` method (`deleteCognitoUser`)
 - [x] Frontend: Dashboard active/archived split + archive/delete actions
 - [x] Frontend: LogTypeEntries archive/delete actions
-- [ ] Frontend: Profile rebuild (editable fields, password change, delete account)
+- [x] Frontend: Profile delete-account action
 - [ ] Manual walkthrough of all new flows
 
 ## Testing
