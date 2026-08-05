@@ -21,6 +21,7 @@ interface AuthContextValue {
   resendConfirmationCode: (email: string) => Promise<void>
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => void
+  deleteCognitoUser: () => void
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -83,6 +84,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(false)
   }
 
+  // Clears local session state after the backend has already deleted the
+  // Cognito user (via its admin API) as part of DELETE /account — there's no
+  // separate self-service Cognito call here, since the user no longer exists.
+  function deleteCognitoUser() {
+    signOut()
+  }
+
   function getAccessToken(): Promise<string | null> {
     const currentUser = userPool.getCurrentUser()
     if (!currentUser) return Promise.resolve(null)
@@ -126,6 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         resendConfirmationCode,
         signIn,
         signOut,
+        deleteCognitoUser,
       }}
     >
       {children}

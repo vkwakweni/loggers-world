@@ -52,8 +52,8 @@ LogType deletion and Account deletion — and adds a new archiving feature.
 - [x] Backend: `accountController.deleteAccount`
 - [x] Backend: wire new routes
 - [x] Backend: unit + integration tests
-- [ ] Frontend: `api.ts` functions
-- [ ] Frontend: `AuthContext` methods (`updateAttributes`, `changePassword`, `deleteCognitoUser`)
+- [x] Frontend: `api.ts` functions
+- [x] Frontend: `AuthContext` method (`deleteCognitoUser`)
 - [ ] Frontend: Dashboard active/archived split + archive/delete actions
 - [ ] Frontend: LogTypeEntries archive/delete actions
 - [ ] Frontend: Profile rebuild (editable fields, password change, delete account)
@@ -63,8 +63,7 @@ LogType deletion and Account deletion — and adds a new archiving feature.
 
 - Backend `npm test` (unit + integration) covering delete/archive/account paths
   against mocked DynamoDB + Cognito clients.
-- Manual browser walkthrough against the dev stack (Cognito attribute/password
-  changes and cross-service cascades aren't exercised by mocks).
+- Manual browser walkthrough against the dev stack (cross-service cascades aren't exercised by mocks).
 - CI green before merge to `main`.
 
 ## Deployment

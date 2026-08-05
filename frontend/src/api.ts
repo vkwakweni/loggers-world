@@ -11,6 +11,7 @@ export interface LogType {
   ownerId: string
   name: string
   fields: LogTypeField[]
+  archived: boolean
 }
 
 export interface LogEntry {
@@ -62,6 +63,19 @@ export function getLogType(accessToken: string, typeId: string): Promise<LogType
   return apiFetch(`/log-types/${typeId}`, accessToken)
 }
 
+export function archiveLogType(accessToken: string, typeId: string, archived: boolean): Promise<LogType> {
+  return apiFetch(`/log-types/${typeId}/archive`, accessToken, {
+    method: 'PATCH',
+    body: JSON.stringify({ archived }),
+  })
+}
+
+export function deleteLogType(accessToken: string, typeId: string): Promise<void> {
+  return apiFetch(`/log-types/${typeId}`, accessToken, {
+    method: 'DELETE',
+  })
+}
+
 export function listLogEntries(accessToken: string, typeId: string): Promise<LogEntry[]> {
   return apiFetch(`/log-types/${typeId}/entries`, accessToken)
 }
@@ -91,6 +105,12 @@ export function updateLogEntry(
 
 export function deleteLogEntry(accessToken: string, typeId: string, createdAt: string): Promise<void> {
   return apiFetch(`/log-types/${typeId}/entries/${encodeURIComponent(createdAt)}`, accessToken, {
+    method: 'DELETE',
+  })
+}
+
+export function deleteAccount(accessToken: string): Promise<void> {
+  return apiFetch('/account', accessToken, {
     method: 'DELETE',
   })
 }
