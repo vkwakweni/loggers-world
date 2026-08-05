@@ -7,6 +7,8 @@ const router = express.Router();
 router.post('/', logTypesController.createLogType);
 router.get('/', logTypesController.listLogTypes);
 router.get('/:typeId', logTypesController.getLogType);
+router.patch('/:typeId/archive', logTypesController.archiveLogType);
+router.delete('/:typeId', logTypesController.deleteLogType);
 
 router.post('/:typeId/entries', logEntriesController.createLogEntry);
 router.get('/:typeId/entries', logEntriesController.listLogEntries);
