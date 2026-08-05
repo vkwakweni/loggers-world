@@ -1,6 +1,15 @@
 const crypto = require('crypto');
-const { PutCommand, QueryCommand, GetCommand } = require('@aws-sdk/lib-dynamodb');
-const { docClient, tableName, logTypeKey } = require('../db');
+const { PutCommand, QueryCommand, GetCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const { ConditionalCheckFailedException } = require('@aws-sdk/client-dynamodb');
+const {
+  docClient,
+  tableName,
+  userKey,
+  logTypeKey,
+  logEntriesSkPrefix,
+  queryAllPages,
+  batchDeleteItems,
+} = require('../db');
 
 /**
  * Create a LogType owned by the authenticated user.
@@ -73,4 +82,65 @@ exports.getLogType = async (req, res) => {
     return res.status(404).json({ error: 'log type not found' });
   }
   res.json(result.Item);
+};
+
+/**
+ * Delete a LogType and cascade-delete all of its LogEntry items.
+ * Responds 404 if the LogType doesn't exist or isn't owned by this user.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+exports.deleteLogType = async (req, res) => {
+  const { typeId } = req.params;
+  const typeKey = logTypeKey(req.ownerId, typeId);
+
+  const existing = await docClient.send(new GetCommand({ TableName: tableName, Key: typeKey }));
+  if (!existing.Item) {
+    return res.status(404).json({ error: 'log type not found' });
+  }
+
+  const entries = await queryAllPages({
+    TableName: tableName,
+    KeyConditionExpression: 'PK = :pk AND begins_with(SK, :skPrefix)',
+    ExpressionAttributeValues: {
+      ':pk': userKey(req.ownerId),
+      ':skPrefix': logEntriesSkPrefix(typeId),
+    },
+  });
+
+  await batchDeleteItems([...entries.map((entry) => ({ PK: entry.PK, SK: entry.SK })), typeKey]);
+  res.status(204).send();
+};
+
+/**
+ * Toggle a LogType's `archived` flag, hiding/unhiding it (and its entries)
+ * from the default dashboard view without deleting anything.
+ * Responds 404 if the LogType doesn't exist or isn't owned by this user.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+exports.archiveLogType = async (req, res) => {
+  const { typeId } = req.params;
+  const { archived } = req.body;
+
+  if (typeof archived !== 'boolean') {
+    return res.status(400).json({ error: 'archived must be a boolean' });
+  }
+
+  try {
+    const result = await docClient.send(new UpdateCommand({
+      TableName: tableName,
+      Key: logTypeKey(req.ownerId, typeId),
+      ConditionExpression: 'attribute_exists(PK)',
+      UpdateExpression: 'SET archived = :archived',
+      ExpressionAttributeValues: { ':archived': archived },
+      ReturnValues: 'ALL_NEW',
+    }));
+    res.json(result.Attributes);
+  } catch (err) {
+    if (err instanceof ConditionalCheckFailedException) {
+      return res.status(404).json({ error: 'log type not found' });
+    }
+    throw err;
+  }
 };
