@@ -31,6 +31,7 @@ Thumbs.db
 
 # Personal setup notes
 artifacts/aws-setup.md
+artifacts/dev/
 
 # drawio source + autosave backups (exported .svg/.png are tracked instead)
 *.drawio
