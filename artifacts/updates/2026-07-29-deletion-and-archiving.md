@@ -1,7 +1,8 @@
 ---
 title: "Update: Deletion & Archiving"
-status: in-progress
+status: done
 started: 2026-07-29
+completed: 2026-08-05
 ---
 
 # Deletion & Archiving
@@ -68,8 +69,13 @@ LogType deletion and Account deletion — and adds a new archiving feature.
 
 ## Deployment
 
-- Production deploy (CDK + Amplify) after CI is green.
-- Smoke test production against a disposable test user
-  (`backend/scripts/create-test-user.sh` / `delete-test-user.sh`).
-- Update `../roadmap.md`'s "Later / Further Development" section to strike the
-  now-resolved bullets, pointing back at this file.
+- [x] Production deploy (CDK + Amplify) after CI is green — merged via
+  [#8](https://github.com/vkwakweni/loggers-world/pull/8); Lambda and Amplify
+  both picked up the merge commit (`4c7cc42`).
+- [x] Smoke test production against a disposable test user
+  (`backend/scripts/create-test-user.sh`) — health check, create → archive →
+  cascade-delete a `LogType`, and delete-account all verified against the live
+  Function URL; `deleteAccount` itself removed the test Cognito user, so no
+  separate `delete-test-user.sh` cleanup was needed.
+- [x] Update `../roadmap.md`'s "Later / Further Development" section to strike
+  the now-resolved bullets, pointing back at this file.
