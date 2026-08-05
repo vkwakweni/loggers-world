@@ -57,7 +57,7 @@ LogType deletion and Account deletion — and adds a new archiving feature.
 - [x] Frontend: Dashboard active/archived split + archive/delete actions
 - [x] Frontend: LogTypeEntries archive/delete actions
 - [x] Frontend: Profile delete-account action
-- [ ] Manual walkthrough of all new flows
+- [x] Manual walkthrough of all new flows
 
 ## Testing
 
