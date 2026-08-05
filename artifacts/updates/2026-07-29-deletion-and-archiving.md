@@ -51,7 +51,7 @@ LogType deletion and Account deletion — and adds a new archiving feature.
 - [x] Backend: `deleteLogType` + `archiveLogType`
 - [x] Backend: `accountController.deleteAccount`
 - [x] Backend: wire new routes
-- [ ] Backend: unit + integration tests
+- [x] Backend: unit + integration tests
 - [ ] Frontend: `api.ts` functions
 - [ ] Frontend: `AuthContext` methods (`updateAttributes`, `changePassword`, `deleteCognitoUser`)
 - [ ] Frontend: Dashboard active/archived split + archive/delete actions
