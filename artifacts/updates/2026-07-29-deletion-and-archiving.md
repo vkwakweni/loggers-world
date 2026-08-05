@@ -46,7 +46,7 @@ LogType deletion and Account deletion — and adds a new archiving feature.
 
 - [x] `data-models.md` — add `archived` field
 - [x] `api-contract.md` — add new routes
-- [ ] Infra: IAM grant for Cognito admin calls, `cdk deploy` to dev
+- [x] Infra: IAM grant for Cognito admin calls, `cdk deploy` to dev
 - [ ] Backend: `db.js` helpers (`userKey`, `queryAllPages`, `batchDeleteItems`)
 - [ ] Backend: `deleteLogType` + `archiveLogType`
 - [ ] Backend: `accountController.deleteAccount`
