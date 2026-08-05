@@ -1,5 +1,6 @@
 const express = require('express');
 const logTypesRouter = require('./routes/logTypes');
+const accountRouter = require('./routes/account');
 const requireAuth = require('./middleware/auth');
 
 const app = express();
@@ -11,6 +12,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/log-types', requireAuth, logTypesRouter);
+app.use('/account', requireAuth, accountRouter);
 
 if (require.main === module) {
   const port = process.env.PORT || 3000;

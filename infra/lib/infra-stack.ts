@@ -4,6 +4,7 @@ import { Construct } from 'constructs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 export class InfraStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -42,6 +43,13 @@ export class InfraStack extends cdk.Stack {
 
     // least-privilege: read/write on this table's ARN only, not "*"
     table.grantReadWriteData(backendFunction);
+
+    // no built-in grant() for admin Cognito actions (unlike the table above), so the
+    // policy is added by hand — scoped to this one user pool's ARN, not "*"
+    backendFunction.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['cognito-idp:AdminDeleteUser', 'cognito-idp:AdminGetUser'],
+      resources: [userPool.userPoolArn],
+    }));
 
     const frontendOrigin = process.env.FRONTEND_ORIGIN;
     if (!frontendOrigin) {

@@ -20,11 +20,13 @@ This project uses a **single table** to store multiple entity types (`LogType` a
     ├── ownerId: string (Cognito sub)
     ├── name: string
     ├── fields: [{ name: string, type: "text" | "number" | "date", required: boolean }]
-    └── createdAt: string (ISO 8601)
+    ├── createdAt: string (ISO 8601)
+    └── archived: boolean
     ```
     * `fields` is an array (not a map) so field order is preserved for form rendering
     * `type` is a closed enum (`text` / `number` / `date`) to keep entry validation simple
     * `createdAt` isn't needed by either access pattern above — it's for display purposes and to match `LogEntry`'s shape
+    * `archived` hides a type (and its entries) from the default dashboard view without deleting anything; it doesn't change either access pattern above, so no new index is needed — the frontend filters on this flag client-side after the existing "get all log types for user X" query
 
 ## `LogEntry`
 * **Access patterns**:

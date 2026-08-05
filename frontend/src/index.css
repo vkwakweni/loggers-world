@@ -293,8 +293,10 @@ a {
   gap: 4px;
 
   li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-radius: 6px;
-    overflow: hidden;
   }
 
   li:has(a):hover {
@@ -302,6 +304,7 @@ a {
   }
 
   a {
+    flex: 1;
     display: block;
     padding: 8px 12px;
     color: var(--text-h);
@@ -348,6 +351,94 @@ button[type='submit'] {
     background: var(--disabled);
     border-color: var(--disabled);
     color: var(--bg);
+  }
+}
+
+.btn-icon {
+  border: none;
+  background: none;
+  padding: 4px;
+
+  &:hover {
+    border-color: transparent;
+    background: none;
+    color: var(--accent);
+  }
+}
+
+.danger-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 32px;
+  padding: 16px 20px;
+  border: 1px solid var(--error);
+  border-radius: 8px;
+
+  h2 {
+    margin: 0;
+    color: var(--error);
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0;
+    color: var(--text);
+  }
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.row-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.row-menu-list {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
+
+  &.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+.row-menu-list button {
+  border: none;
+  border-radius: 0;
+  width: 100%;
+  justify-content: flex-start;
+  color: var(--text-h);
+  background: none;
+
+  &:hover {
+    background: var(--accent-bg);
+    color: var(--text-h);
   }
 }
 

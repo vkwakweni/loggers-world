@@ -26,6 +26,8 @@ jobs:
 
       - run: npm ci --prefix frontend
       - run: npm run lint --prefix frontend
+      - run: npx tsc -b --noEmit
+        working-directory: frontend
       - run: npm test --prefix frontend
 
       - run: npm ci --prefix infra
