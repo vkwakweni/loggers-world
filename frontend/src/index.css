@@ -10,6 +10,7 @@
   --on-accent: #fff;
   --error: #b5482f;
   --error-bg: rgba(181, 72, 47, 0.1);
+  --error-border: rgba(181, 72, 47, 0.5);
   --on-error: #fff;
   --success: #6b7d2a;
   --success-bg: rgba(107, 125, 42, 0.1);
@@ -50,6 +51,7 @@
     --on-accent: #0f1a0e;
     --error: #e08a6d;
     --error-bg: rgba(224, 138, 109, 0.15);
+    --error-border: rgba(224, 138, 109, 0.5);
     --on-error: #2a0e08;
     --success: #b4c96a;
     --success-bg: rgba(180, 201, 106, 0.15);
@@ -76,6 +78,7 @@
   --on-accent: #fff;
   --error: #b5482f;
   --error-bg: rgba(181, 72, 47, 0.1);
+  --error-border: rgba(181, 72, 47, 0.5);
   --on-error: #fff;
   --success: #6b7d2a;
   --success-bg: rgba(107, 125, 42, 0.1);
@@ -97,6 +100,7 @@
   --on-accent: #0f1a0e;
   --error: #e08a6d;
   --error-bg: rgba(224, 138, 109, 0.15);
+  --error-border: rgba(224, 138, 109, 0.5);
   --on-error: #2a0e08;
   --success: #b4c96a;
   --success-bg: rgba(180, 201, 106, 0.15);
@@ -173,7 +177,7 @@ a {
 }
 
 .status-message {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
   font-size: 14px;
@@ -283,6 +287,18 @@ a {
   }
 }
 
+.profile-attr-edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  input {
+    font-weight: 600;
+    font-size: 16px;
+    padding: 4px 8px;
+  }
+}
+
 .page ul {
   list-style: none;
   margin: 0;
@@ -364,6 +380,10 @@ button[type='submit'] {
     background: none;
     color: var(--accent);
   }
+}
+
+.btn-icon-danger:hover {
+  color: var(--error);
 }
 
 .danger-zone {
@@ -449,6 +469,7 @@ button[type='submit'] {
 
   &:hover {
     background: var(--error);
+    border-color: var(--error-border);
     color: var(--on-error);
   }
 }
