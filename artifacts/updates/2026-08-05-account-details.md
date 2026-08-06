@@ -47,7 +47,7 @@ Resolves the "Updating account details" backlog item in `../roadmap.md`.
 - [x] `AuthContext`: `updateAttributes`
 - [x] `AuthContext`: `changePassword`
 - [x] Frontend: Profile editable display name + save
-- [ ] Frontend: Profile password-change form
+- [x] Frontend: Profile password-change form
 - [ ] Manual walkthrough of both flows
 
 ## Testing

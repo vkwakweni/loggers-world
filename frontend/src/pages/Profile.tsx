@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { LogOut, Trash2, Pencil, Check, X } from 'lucide-react'
 import { useAuth, type UserAttributes } from '../auth/AuthContext'
 import { deleteAccount } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import PasswordInput from '../components/PasswordInput'
 
 // Stub: email change is out of scope for now (see roadmap.md backlog and
 // artifacts/updates/2026-08-05-account-details.md).
 function Profile() {
-  const { signOut, getUserAttributes, getAccessToken, deleteCognitoUser, updateAttributes } = useAuth()
+  const { signOut, getUserAttributes, getAccessToken, deleteCognitoUser, updateAttributes, changePassword } = useAuth()
   const navigate = useNavigate()
   const [attributes, setAttributes] = useState<UserAttributes | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -19,6 +20,13 @@ function Profile() {
   const [nameDraft, setNameDraft] = useState('')
   const [nameSaving, setNameSaving] = useState(false)
   const [nameError, setNameError] = useState<string | null>(null)
+
+  const [changingPassword, setChangingPassword] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [passwordSubmitting, setPasswordSubmitting] = useState(false)
+  const [passwordError, setPasswordError] = useState<string | null>(null)
 
   useEffect(() => {
     getUserAttributes()
@@ -56,6 +64,39 @@ function Profile() {
       setNameError(err instanceof Error ? err.message : 'Could not update display name')
     } finally {
       setNameSaving(false)
+    }
+  }
+
+  function handleStartChangePassword() {
+    setCurrentPassword('')
+    setNewPassword('')
+    setConfirmPassword('')
+    setPasswordError(null)
+    setChangingPassword(true)
+  }
+
+  function handleCancelChangePassword() {
+    setChangingPassword(false)
+    setPasswordError(null)
+  }
+
+  async function handleChangePassword(e: SubmitEvent) {
+    e.preventDefault()
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New passwords do not match')
+      return
+    }
+
+    setPasswordError(null)
+    setPasswordSubmitting(true)
+    try {
+      await changePassword(currentPassword, newPassword)
+      setChangingPassword(false)
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : 'Could not change password')
+    } finally {
+      setPasswordSubmitting(false)
     }
   }
 
@@ -118,9 +159,60 @@ function Profile() {
               </dd>
             )}
           </div>
+          <div className={changingPassword ? 'profile-attr profile-attr-stacked' : 'profile-attr'}>
+            <dt>Password</dt>
+            {changingPassword ? (
+              <dd>
+                <form onSubmit={handleChangePassword}>
+                  <label>
+                    Current password:{' '}
+                    <PasswordInput
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      autoComplete="current-password"
+                      required
+                    />
+                  </label>
+                  <label>
+                    New password:{' '}
+                    <PasswordInput
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      autoComplete="new-password"
+                      required
+                    />
+                  </label>
+                  <label>
+                    Confirm new password:{' '}
+                    <PasswordInput
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      autoComplete="new-password"
+                      required
+                    />
+                  </label>
+                  {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+                  <button type="submit" disabled={passwordSubmitting}>
+                    {passwordSubmitting ? 'Updating...' : 'Update password'}
+                  </button>
+                  <button type="button" onClick={handleCancelChangePassword} disabled={passwordSubmitting}>
+                    Cancel
+                  </button>
+                </form>
+              </dd>
+            ) : (
+              <dd className="profile-attr-edit">
+                &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
+                <button type="button" className="btn-icon" onClick={handleStartChangePassword} aria-label="Change password">
+                  <Pencil size={16} aria-hidden="true" />
+                </button>
+              </dd>
+            )}
+          </div>
         </dl>
       )}
       {nameError && <ErrorMessage>{nameError}</ErrorMessage>}
+
       <button type="button" onClick={handleSignOut}>
         <LogOut size={16} aria-hidden="true" /> Sign out
       </button>
