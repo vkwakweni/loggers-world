@@ -23,6 +23,7 @@ interface AuthContextValue {
   signOut: () => void
   deleteCognitoUser: () => void
   updateAttributes: (attributes: Partial<UserAttributes>) => Promise<void>
+  changePassword: (oldPassword: string, newPassword: string) => Promise<void>
 }
 
 // Maps our UserAttributes field names to Cognito's actual attribute names.
@@ -129,6 +130,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }
 
+  function changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    const currentUser = userPool.getCurrentUser()
+    if (!currentUser) return Promise.reject(new Error('Not signed in'))
+
+    return new Promise((resolve, reject) => {
+      currentUser.getSession((sessionErr: Error | null, session: CognitoUserSession | null) => {
+        if (sessionErr || !session) return reject(sessionErr ?? new Error('Not signed in'))
+
+        currentUser.changePassword(oldPassword, newPassword, (err) => {
+          if (err) reject(err)
+          else resolve()
+        })
+      })
+    })
+  }
+
   function getUserAttributes(): Promise<UserAttributes | null> {
     const currentUser = userPool.getCurrentUser()
     if (!currentUser) return Promise.resolve(null)
@@ -163,6 +180,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signOut,
         deleteCognitoUser,
         updateAttributes,
+        changePassword,
       }}
     >
       {children}
