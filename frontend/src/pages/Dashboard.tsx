@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Plus, Eye, EyeOff, Trash2 } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
-import { listLogTypes, archiveLogType, deleteLogType, type LogType } from '../api'
+import { listLogTypes, archiveLogType, deleteLogType, NetworkError, type LogType } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import OfflineMessage from '../components/OfflineMessage'
 import RowMenu from '../components/RowMenu'
 import { useDelayedLoading } from '../hooks/useDelayedLoading'
+import { useOnlineRetry } from '../hooks/useOnlineRetry'
 
 function Dashboard() {
   const { getAccessToken } = useAuth()
@@ -13,22 +15,33 @@ function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [networkError, setNetworkError] = useState(false)
   const showLoading = useDelayedLoading(loading)
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const accessToken = await getAccessToken()
-        if (!accessToken) throw new Error('Not signed in')
-        setLogTypes(await listLogTypes(accessToken))
-      } catch (err) {
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    setNetworkError(false)
+    try {
+      const accessToken = await getAccessToken()
+      if (!accessToken) throw new Error('Not signed in')
+      setLogTypes(await listLogTypes(accessToken))
+    } catch (err) {
+      if (err instanceof NetworkError) {
+        setNetworkError(true)
+      } else {
         setError(err instanceof Error ? err.message : 'Could not load log types')
-      } finally {
-        setLoading(false)
       }
+    } finally {
+      setLoading(false)
     }
-    load()
   }, [getAccessToken])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  useOnlineRetry(load)
 
   async function handleArchiveToggle(logType: LogType) {
     setActionError(null)
@@ -57,6 +70,8 @@ function Dashboard() {
       setActionError(err instanceof Error ? err.message : 'Could not delete log type')
     }
   }
+
+  if (networkError) return <OfflineMessage />
 
   const activeTypes = logTypes.filter((t) => !t.archived)
   const archivedTypes = logTypes.filter((t) => t.archived)

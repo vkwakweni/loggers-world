@@ -24,15 +24,30 @@ export interface LogEntry {
 
 const baseUrl = import.meta.env.VITE_FUNCTION_URL
 
+// Thrown when `fetch` itself fails (no connectivity, DNS down, etc.) before
+// any response exists — distinct from a normal API error, where the server
+// responded but with a non-2xx status.
+export class NetworkError extends Error {
+  constructor() {
+    super('No internet connection')
+    this.name = 'NetworkError'
+  }
+}
+
 async function apiFetch(path: string, accessToken: string, options: RequestInit = {}) {
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-      ...options.headers,
-    },
-  })
+  let response: Response
+  try {
+    response = await fetch(`${baseUrl}${path}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        ...options.headers,
+      },
+    })
+  } catch {
+    throw new NetworkError()
+  }
 
   if (!response.ok) {
     const body = await response.json().catch(() => null)

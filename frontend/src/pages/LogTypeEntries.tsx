@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Pencil, Trash2, Plus, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
@@ -8,12 +8,15 @@ import {
   deleteLogEntry,
   archiveLogType,
   deleteLogType,
+  NetworkError,
   type LogType,
   type LogEntry,
 } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import OfflineMessage from '../components/OfflineMessage'
 import RowMenu from '../components/RowMenu'
 import { useDelayedLoading } from '../hooks/useDelayedLoading'
+import { useOnlineRetry } from '../hooks/useOnlineRetry'
 
 function LogTypeEntries() {
   const { typeId } = useParams<{ typeId: string }>()
@@ -23,31 +26,42 @@ function LogTypeEntries() {
   const [logType, setLogType] = useState<LogType | null>(null)
   const [entries, setEntries] = useState<LogEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const [networkError, setNetworkError] = useState(false)
   const showLoading = useDelayedLoading(loading)
   const [error, setError] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const accessToken = await getAccessToken()
-        if (!accessToken || !typeId) throw new Error('Not signed in')
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    setNetworkError(false)
+    try {
+      const accessToken = await getAccessToken()
+      if (!accessToken || !typeId) throw new Error('Not signed in')
 
-        const [type, entryList] = await Promise.all([
-          getLogType(accessToken, typeId),
-          listLogEntries(accessToken, typeId),
-        ])
-        setLogType(type)
-        setEntries(entryList)
-      } catch (err) {
+      const [type, entryList] = await Promise.all([
+        getLogType(accessToken, typeId),
+        listLogEntries(accessToken, typeId),
+      ])
+      setLogType(type)
+      setEntries(entryList)
+    } catch (err) {
+      if (err instanceof NetworkError) {
+        setNetworkError(true)
+      } else {
         setError(err instanceof Error ? err.message : 'Could not load entries')
-      } finally {
-        setLoading(false)
       }
+    } finally {
+      setLoading(false)
     }
-    load()
   }, [getAccessToken, typeId])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  useOnlineRetry(load)
 
   async function handleDelete(entry: LogEntry) {
     if (!typeId) return
@@ -96,6 +110,7 @@ function LogTypeEntries() {
   }
 
   if (loading) return showLoading ? <LoadingMessage /> : null
+  if (networkError) return <OfflineMessage />
   if (error) return <ErrorMessage>{error}</ErrorMessage>
   if (!logType || !typeId) return null
 
