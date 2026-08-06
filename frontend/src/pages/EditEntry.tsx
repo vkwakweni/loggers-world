@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
 import { getLogType, listLogEntries, updateLogEntry, type LogType, type LogEntry } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
 
 function EditEntry() {
   const { typeId, createdAt } = useParams<{ typeId: string; createdAt: string }>()
@@ -13,6 +14,7 @@ function EditEntry() {
   const [entry, setEntry] = useState<LogEntry | null>(null)
   const [values, setValues] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
+  const showLoading = useDelayedLoading(loading)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -74,7 +76,7 @@ function EditEntry() {
     }
   }
 
-  if (loading) return <LoadingMessage />
+  if (loading) return showLoading ? <LoadingMessage /> : null
   if (error && !logType) return <ErrorMessage>{error}</ErrorMessage>
   if (!logType) return null
 

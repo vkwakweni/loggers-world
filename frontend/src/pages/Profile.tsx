@@ -5,6 +5,7 @@ import { useAuth, type UserAttributes } from '../auth/AuthContext'
 import { deleteAccount } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 import PasswordInput from '../components/PasswordInput'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
 
 // Stub: email change is out of scope for now (see roadmap.md backlog and
 // artifacts/updates/2026-08-05-account-details.md).
@@ -14,6 +15,7 @@ function Profile() {
   const [attributes, setAttributes] = useState<UserAttributes | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const showLoading = useDelayedLoading(loading)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const [editingName, setEditingName] = useState(false)
@@ -124,7 +126,7 @@ function Profile() {
   return (
     <div className="page">
       <h1>Profile</h1>
-      {loading && <LoadingMessage />}
+      {showLoading && <LoadingMessage />}
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {attributes && (
         <dl className="profile-attrs">

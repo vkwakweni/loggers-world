@@ -5,6 +5,7 @@ import { useAuth } from '../auth/AuthContext'
 import { listLogTypes, archiveLogType, deleteLogType, type LogType } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 import RowMenu from '../components/RowMenu'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
 
 function Dashboard() {
   const { getAccessToken } = useAuth()
@@ -12,6 +13,7 @@ function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const showLoading = useDelayedLoading(loading)
 
   useEffect(() => {
     async function load() {
@@ -95,7 +97,7 @@ function Dashboard() {
         <Link to="/log-types/new" className="btn btn-primary">
           <Plus size={16} aria-hidden="true" /> New Log Type
         </Link>
-        {loading && <LoadingMessage />}
+        {showLoading && <LoadingMessage />}
         {error && <ErrorMessage>{error}</ErrorMessage>}
         {actionError && <ErrorMessage>{actionError}</ErrorMessage>}
         {!loading && !error && activeTypes.length === 0 && <p className="empty-state">No log types yet.</p>}

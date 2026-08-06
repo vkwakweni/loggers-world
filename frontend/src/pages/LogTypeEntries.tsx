@@ -13,6 +13,7 @@ import {
 } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 import RowMenu from '../components/RowMenu'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
 
 function LogTypeEntries() {
   const { typeId } = useParams<{ typeId: string }>()
@@ -22,6 +23,7 @@ function LogTypeEntries() {
   const [logType, setLogType] = useState<LogType | null>(null)
   const [entries, setEntries] = useState<LogEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const showLoading = useDelayedLoading(loading)
   const [error, setError] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -93,7 +95,7 @@ function LogTypeEntries() {
     }
   }
 
-  if (loading) return <LoadingMessage />
+  if (loading) return showLoading ? <LoadingMessage /> : null
   if (error) return <ErrorMessage>{error}</ErrorMessage>
   if (!logType || !typeId) return null
 
