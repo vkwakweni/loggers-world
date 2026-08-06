@@ -1,7 +1,8 @@
 ---
 title: "Update: Account Details"
-status: in-progress
+status: done
 started: 2026-08-05
+completed: 2026-08-05
 ---
 
 # Account Details
@@ -48,7 +49,7 @@ Resolves the "Updating account details" backlog item in `../roadmap.md`.
 - [x] `AuthContext`: `changePassword`
 - [x] Frontend: Profile editable display name + save
 - [x] Frontend: Profile password-change form
-- [ ] Manual walkthrough of both flows
+- [x] Manual walkthrough of both flows
 
 ## Testing
 
