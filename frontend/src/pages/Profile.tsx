@@ -1,11 +1,13 @@
-import { useEffect, useState, type SubmitEvent } from 'react'
+import { useCallback, useEffect, useState, type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { LogOut, Trash2, Pencil, Check, X } from 'lucide-react'
 import { useAuth, type UserAttributes } from '../auth/AuthContext'
-import { deleteAccount } from '../api'
+import { deleteAccount, NetworkError } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 import PasswordInput from '../components/PasswordInput'
+import OfflineMessage from '../components/OfflineMessage'
 import { useDelayedLoading } from '../hooks/useDelayedLoading'
+import { useOnlineRetry } from '../hooks/useOnlineRetry'
 
 // Stub: email change is out of scope for now (see roadmap.md backlog and
 // artifacts/updates/2026-08-05-account-details.md).
@@ -15,6 +17,7 @@ function Profile() {
   const [attributes, setAttributes] = useState<UserAttributes | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [networkError, setNetworkError] = useState(false)
   const showLoading = useDelayedLoading(loading)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
@@ -30,10 +33,19 @@ function Profile() {
   const [passwordSubmitting, setPasswordSubmitting] = useState(false)
   const [passwordError, setPasswordError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true)
+    setError(null)
+    setNetworkError(false)
     getUserAttributes()
       .then(setAttributes)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Could not load profile'))
+      .catch((err) => {
+        if (err instanceof NetworkError) {
+          setNetworkError(true)
+        } else {
+          setError(err instanceof Error ? err.message : 'Could not load profile')
+        }
+      })
       .finally(() => setLoading(false))
   }, [getUserAttributes])
 
@@ -102,6 +114,12 @@ function Profile() {
     }
   }
 
+  useEffect(() => {
+    load()
+  }, [load])
+
+  useOnlineRetry(load)
+
   function handleSignOut() {
     signOut()
     navigate('/')
@@ -122,6 +140,8 @@ function Profile() {
       setDeleteError(err instanceof Error ? err.message : 'Could not delete account')
     }
   }
+
+  if (networkError) return <OfflineMessage />
 
   return (
     <div className="page">
