@@ -22,6 +22,15 @@ interface AuthContextValue {
   signIn: (email: string, password: string) => Promise<void>
   signOut: () => void
   deleteCognitoUser: () => void
+  updateAttributes: (attributes: Partial<UserAttributes>) => Promise<void>
+  changePassword: (oldPassword: string, newPassword: string) => Promise<void>
+}
+
+// Maps our UserAttributes field names to Cognito's actual attribute names.
+// Add an entry here (and to UserAttributes) to make a new field editable.
+const COGNITO_ATTRIBUTE_NAMES: Record<keyof UserAttributes, string> = {
+  email: 'email',
+  displayName: 'preferred_username',
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined)
@@ -102,6 +111,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
   }
 
+  function updateAttributes(attributes: Partial<UserAttributes>): Promise<void> {
+    const currentUser = userPool.getCurrentUser()
+    if (!currentUser) return Promise.reject(new Error('Not signed in'))
+
+    return new Promise((resolve, reject) => {
+      currentUser.getSession((sessionErr: Error | null, session: CognitoUserSession | null) => {
+        if (sessionErr || !session) return reject(sessionErr ?? new Error('Not signed in'))
+
+        const cognitoAttributes = (Object.keys(attributes) as Array<keyof UserAttributes>).map(
+          (key) => new CognitoUserAttribute({ Name: COGNITO_ATTRIBUTE_NAMES[key], Value: attributes[key]! }),
+        )
+        currentUser.updateAttributes(cognitoAttributes, (err) => {
+          if (err) reject(err)
+          else resolve()
+        })
+      })
+    })
+  }
+
+  function changePassword(oldPassword: string, newPassword: string): Promise<void> {
+    const currentUser = userPool.getCurrentUser()
+    if (!currentUser) return Promise.reject(new Error('Not signed in'))
+
+    return new Promise((resolve, reject) => {
+      currentUser.getSession((sessionErr: Error | null, session: CognitoUserSession | null) => {
+        if (sessionErr || !session) return reject(sessionErr ?? new Error('Not signed in'))
+
+        currentUser.changePassword(oldPassword, newPassword, (err) => {
+          if (err) reject(err)
+          else resolve()
+        })
+      })
+    })
+  }
+
   function getUserAttributes(): Promise<UserAttributes | null> {
     const currentUser = userPool.getCurrentUser()
     if (!currentUser) return Promise.resolve(null)
@@ -135,6 +179,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signOut,
         deleteCognitoUser,
+        updateAttributes,
+        changePassword,
       }}
     >
       {children}
