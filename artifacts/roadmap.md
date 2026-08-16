@@ -1,6 +1,6 @@
 ---
 title: 7-Day Development Roadmap
-last-updated: 2026-07-18
+last-updated: 2026-08-17
 ---
 
 # 7-Day Development Roadmap
@@ -101,15 +101,15 @@ last-updated: 2026-07-18
 - `LogType` editing (rename/add/remove fields): not in this week's scope since only creation is planned, but once editing exists, existing `LogEntry` items won't retroactively match the updated `fields` list — needs a strategy (e.g. migrate old entries, or tolerate/display drifted fields gracefully)
 - ~~`LogType` deletion~~ — resolved by the [2026-07-29 Deletion & Archiving update](updates/2026-07-29-deletion-and-archiving.md): cascade-delete, plus a separate archive (soft-hide) option
 - Entry filtering: let the user narrow the entry list by field value or date range, beyond the default chronological view shipped in Day 5
-- Entry table cell overflow: long field values currently wrap/stretch the row instead of truncating; cap column width and truncate with an ellipsis (`text-overflow: ellipsis`), ideally with the full value visible on hover/title — found during the Day 5 manual walkthrough
+- ~~Entry table cell overflow~~ — resolved by the [2026-08-06 UI Polish update](updates/2026-08-06-ui-polish.md): capped column width, `text-overflow: ellipsis` truncation, full value on hover via `title`
 - ~~Account deletion~~ — resolved by the [2026-07-29 Deletion & Archiving update](updates/2026-07-29-deletion-and-archiving.md): cascades all owned `LogType`/`LogEntry` items, then deletes the Cognito user
 - Updating account details: `/profile` is currently read-only (email + display name display, per the Day-4 stub comment in `Profile.tsx`) — no way to change display name, email, or password from the UI
 - Session expiry: log in should expire after 2 weeks of inactivity, rather than staying valid indefinitely — needs a decision on mechanism (Cognito refresh token TTL config vs. client-side inactivity tracking)
-- Mobile view: do a general pass on the app in phone-width viewports (no dedicated responsive review has been done yet)
+- ~~Mobile view~~ — resolved by the [2026-08-06 UI Polish update](updates/2026-08-06-ui-polish.md): full mobile/responsive walkthrough across every page
 - Date entry format: change to dd/mm/yyyy. Currently input is mm/dd/yyyy (only the input, not the display) and display is yyyy-mm-dd
 - `getAccessToken` + not-signed-in check duplication: `const token = await getAccessToken(); if (!token) throw new Error('Not signed in')` is repeated across page components (`Dashboard.tsx`, `LogTypeEntries.tsx`, and growing) — add a `getAccessTokenOrThrow()` to `AuthContext` to collapse the pair into one call, found while adding archive/delete actions to `Dashboard.tsx`
-- Loading screen placement/style: `LoadingMessage` (`components/StatusMessage.tsx`) renders inline at the top-left of the page content, which reads awkwardly on page-load — wants a more deliberate loading state (e.g. centered, skeleton, or full-page spinner) instead of the plain top-left text+spinner, found during the deletion/archiving manual walkthrough
-- General layout density/whitespace pass: pages feel like they have too much empty space — worth a dedicated design/polish pass once more pages/components exist (rather than fixing piecemeal per-feature), covering spacing, `.page`/`.page-header` sizing, and overall visual density across the app
+- ~~Loading screen placement/style~~ — resolved by the [2026-08-06 UI Polish update](updates/2026-08-06-ui-polish.md): centered spinner, plus a delayed-loading hook so fast requests never flash it
+- ~~General layout density/whitespace pass~~ — resolved by the [2026-08-06 UI Polish update](updates/2026-08-06-ui-polish.md)
 - Settings page: the theme toggle currently lives as a stacked row inside the mobile nav's collapsed menu (`ThemeToggle` with `showLabel`, `App.tsx`/`App.css`), which still doesn't feel right — belongs in a dedicated `/settings` page instead, found during the UI Polish update's mobile nav rework
 - Unauthenticated flow rework: currently Landing/Sign Up/Log In are three peer nav destinations with a full collapsible nav menu, same as the authenticated side — wants to become a one-track flow instead (opens on the Landing page, user picks where to go from there, no persistent nav links), with just a theme toggle in the header, no hamburger menu; design decisions (exact entry points, header shape) still need to be made, found during the UI Polish update's mobile pass
 - Text resize accessibility: a user's OS/browser "larger text" preference currently has no effect on this app (browser page zoom still works fine — that's unrelated, scales the viewport regardless of units). Cause: `:root` sets `font: 18px/145%` and every `font-size` in `index.css` is declared in absolute `px` rather than a relative unit, so the browser's user-preferred default text size never cascades in. Blocked from fixing now because it means converting the typographic — and arguably spacing — scale from `px` to `rem` across nearly every rule in the stylesheet, a foundational change too large for a UI-polish branch. Found while reasoning through the mobile/responsive pass, 2026-08-16.
