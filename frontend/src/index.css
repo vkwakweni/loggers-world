@@ -534,6 +534,13 @@ td {
   border-bottom: 1px solid var(--border);
 }
 
+td.truncate {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 th {
   color: var(--text-h);
   font-weight: 600;

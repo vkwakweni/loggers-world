@@ -158,9 +158,14 @@ function LogTypeEntries() {
           <tbody>
             {entries.map((entry) => (
               <tr key={entry.entryId}>
-                {logType.fields.map((field) => (
-                  <td key={field.name}>{entry.fields[field.name] ?? ''}</td>
-                ))}
+                {logType.fields.map((field) => {
+                  const value = entry.fields[field.name] ?? ''
+                  return (
+                    <td key={field.name} className="truncate" title={String(value)}>
+                      {value}
+                    </td>
+                  )
+                })}
                 <td>
                   <Link to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}>
                     <Pencil size={16} aria-hidden="true" /> Edit
