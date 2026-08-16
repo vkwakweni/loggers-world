@@ -1,8 +1,11 @@
-import { useEffect, useState, type SubmitEvent } from 'react'
+import { useCallback, useEffect, useState, type SubmitEvent } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useAuth } from '../auth/AuthContext'
-import { getLogType, listLogEntries, updateLogEntry, type LogType, type LogEntry } from '../api'
+import { getLogType, listLogEntries, updateLogEntry, NetworkError, type LogType, type LogEntry } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import OfflineMessage from '../components/OfflineMessage'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
+import { useOnlineRetry } from '../hooks/useOnlineRetry'
 
 function EditEntry() {
   const { typeId, createdAt } = useParams<{ typeId: string; createdAt: string }>()
@@ -13,35 +16,47 @@ function EditEntry() {
   const [entry, setEntry] = useState<LogEntry | null>(null)
   const [values, setValues] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(true)
+  const [networkError, setNetworkError] = useState(false)
+  const showLoading = useDelayedLoading(loading)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const accessToken = await getAccessToken()
-        if (!accessToken || !typeId || !createdAt) throw new Error('Not signed in')
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    setNetworkError(false)
+    try {
+      const accessToken = await getAccessToken()
+      if (!accessToken || !typeId || !createdAt) throw new Error('Not signed in')
 
-        const [type, entries] = await Promise.all([
-          getLogType(accessToken, typeId),
-          listLogEntries(accessToken, typeId),
-        ])
-        const found = entries.find((e) => e.createdAt === createdAt)
-        if (!found) throw new Error('Entry not found')
+      const [type, entries] = await Promise.all([
+        getLogType(accessToken, typeId),
+        listLogEntries(accessToken, typeId),
+      ])
+      const found = entries.find((e) => e.createdAt === createdAt)
+      if (!found) throw new Error('Entry not found')
 
-        setLogType(type)
-        setEntry(found)
-        setValues(
-          Object.fromEntries(type.fields.map((field) => [field.name, String(found.fields[field.name] ?? '')])),
-        )
-      } catch (err) {
+      setLogType(type)
+      setEntry(found)
+      setValues(
+        Object.fromEntries(type.fields.map((field) => [field.name, String(found.fields[field.name] ?? '')])),
+      )
+    } catch (err) {
+      if (err instanceof NetworkError) {
+        setNetworkError(true)
+      } else {
         setError(err instanceof Error ? err.message : 'Could not load entry')
-      } finally {
-        setLoading(false)
       }
+    } finally {
+      setLoading(false)
     }
-    load()
   }, [getAccessToken, typeId, createdAt])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  useOnlineRetry(load)
 
   function updateValue(name: string, value: string) {
     setValues((prev) => ({ ...prev, [name]: value }))
@@ -74,12 +89,13 @@ function EditEntry() {
     }
   }
 
-  if (loading) return <LoadingMessage />
+  if (loading) return showLoading ? <LoadingMessage /> : null
+  if (networkError) return <OfflineMessage />
   if (error && !logType) return <ErrorMessage>{error}</ErrorMessage>
   if (!logType) return null
 
   return (
-    <div>
+    <div className="page">
       <h1>Edit {logType.name} Entry</h1>
       <form onSubmit={handleSubmit}>
         {logType.fields.map((field) => (

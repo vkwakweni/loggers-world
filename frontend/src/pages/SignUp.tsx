@@ -64,7 +64,7 @@ function SignUp() {
 
   if (stage === 'confirm') {
     return (
-      <div>
+      <div className="page">
         <h1>Confirm Your Email</h1>
         <p>Enter the code sent to {email}.</p>
         <form onSubmit={handleConfirm}>
@@ -85,7 +85,7 @@ function SignUp() {
   }
 
   return (
-    <div>
+    <div className="page">
       <h1>Create Account</h1>
       <form onSubmit={handleSubmit}>
         <label>

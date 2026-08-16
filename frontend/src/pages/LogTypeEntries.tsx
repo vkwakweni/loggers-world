@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { Pencil, Trash2, Plus, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
@@ -8,11 +8,16 @@ import {
   deleteLogEntry,
   archiveLogType,
   deleteLogType,
+  NetworkError,
   type LogType,
   type LogEntry,
 } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import OfflineMessage from '../components/OfflineMessage'
 import RowMenu from '../components/RowMenu'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
+import { useOnlineRetry } from '../hooks/useOnlineRetry'
+import { ICON_SM } from '../iconSizes'
 
 function LogTypeEntries() {
   const { typeId } = useParams<{ typeId: string }>()
@@ -22,30 +27,42 @@ function LogTypeEntries() {
   const [logType, setLogType] = useState<LogType | null>(null)
   const [entries, setEntries] = useState<LogEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const [networkError, setNetworkError] = useState(false)
+  const showLoading = useDelayedLoading(loading)
   const [error, setError] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const accessToken = await getAccessToken()
-        if (!accessToken || !typeId) throw new Error('Not signed in')
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    setNetworkError(false)
+    try {
+      const accessToken = await getAccessToken()
+      if (!accessToken || !typeId) throw new Error('Not signed in')
 
-        const [type, entryList] = await Promise.all([
-          getLogType(accessToken, typeId),
-          listLogEntries(accessToken, typeId),
-        ])
-        setLogType(type)
-        setEntries(entryList)
-      } catch (err) {
+      const [type, entryList] = await Promise.all([
+        getLogType(accessToken, typeId),
+        listLogEntries(accessToken, typeId),
+      ])
+      setLogType(type)
+      setEntries(entryList)
+    } catch (err) {
+      if (err instanceof NetworkError) {
+        setNetworkError(true)
+      } else {
         setError(err instanceof Error ? err.message : 'Could not load entries')
-      } finally {
-        setLoading(false)
       }
+    } finally {
+      setLoading(false)
     }
-    load()
   }, [getAccessToken, typeId])
+
+  useEffect(() => {
+    load()
+  }, [load])
+
+  useOnlineRetry(load)
 
   async function handleDelete(entry: LogEntry) {
     if (!typeId) return
@@ -93,7 +110,8 @@ function LogTypeEntries() {
     }
   }
 
-  if (loading) return <LoadingMessage />
+  if (loading) return showLoading ? <LoadingMessage /> : null
+  if (networkError) return <OfflineMessage />
   if (error) return <ErrorMessage>{error}</ErrorMessage>
   if (!logType || !typeId) return null
 
@@ -102,24 +120,29 @@ function LogTypeEntries() {
       <div className="page-header">
         <h1>{logType.name} Entries</h1>
         <RowMenu label={`Actions for ${logType.name}`}>
-          <button type="button" onClick={handleArchiveToggle}>
+          <button
+            type="button"
+            className="btn-icon"
+            aria-label={logType.archived ? 'Unarchive' : 'Archive'}
+            onClick={handleArchiveToggle}
+          >
             {logType.archived ? (
               <>
-                <Eye size={16} aria-hidden="true" /> Unarchive
+                <Eye size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
               </>
             ) : (
               <>
-                <EyeOff size={16} aria-hidden="true" /> Archive
+                <EyeOff size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Archive</span>
               </>
             )}
           </button>
-          <button type="button" onClick={handleTypeDelete}>
-            <Trash2 size={16} aria-hidden="true" /> Delete
+          <button type="button" className="btn-icon btn-danger" aria-label="Delete" onClick={handleTypeDelete}>
+            <Trash2 size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Delete</span>
           </button>
         </RowMenu>
       </div>
       <Link to={`/log-types/${typeId}/entries/new`} className="btn btn-primary">
-        <Plus size={16} aria-hidden="true" /> Add entry
+        <Plus size={ICON_SM} aria-hidden="true" /> Add entry
       </Link>
 
       {actionError && <ErrorMessage>{actionError}</ErrorMessage>}
@@ -128,36 +151,47 @@ function LogTypeEntries() {
       {entries.length === 0 ? (
         <p className="empty-state">No entries yet.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              {logType.fields.map((field) => (
-                <th key={field.name}>{field.name}</th>
-              ))}
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entries.map((entry) => (
-              <tr key={entry.entryId}>
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
                 {logType.fields.map((field) => (
-                  <td key={field.name}>{entry.fields[field.name] ?? ''}</td>
+                  <th key={field.name}>{field.name}</th>
                 ))}
-                <td>
-                  <Link to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}>
-                    <Pencil size={16} aria-hidden="true" /> Edit
-                  </Link>
-                </td>
-                <td>
-                  <button type="button" className="btn-danger" onClick={() => handleDelete(entry)}>
-                    <Trash2 size={16} aria-hidden="true" /> Delete
-                  </button>
-                </td>
+                <th>Edit</th>
+                <th>Delete</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {entries.map((entry) => (
+                <tr key={entry.entryId}>
+                  {logType.fields.map((field) => {
+                    const value = entry.fields[field.name] ?? ''
+                    return (
+                      <td key={field.name} className="truncate" title={String(value)}>
+                        {value}
+                      </td>
+                    )
+                  })}
+                  <td>
+                    <Link
+                      to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}
+                      className="btn"
+                      aria-label="Edit"
+                    >
+                      <Pencil size={ICON_SM} aria-hidden="true" />
+                    </Link>
+                  </td>
+                  <td>
+                    <button type="button" className="btn-danger" aria-label="Delete" onClick={() => handleDelete(entry)}>
+                      <Trash2 size={ICON_SM} aria-hidden="true" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

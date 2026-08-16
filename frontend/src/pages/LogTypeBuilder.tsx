@@ -1,8 +1,10 @@
 import { useState, type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router'
+import { Trash2 } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
 import { createLogType, type FieldType, type LogTypeField } from '../api'
 import { ErrorMessage } from '../components/StatusMessage'
+import { ICON_SM } from '../iconSizes'
 
 const FIELD_TYPES: FieldType[] = ['text', 'number', 'date']
 
@@ -58,7 +60,7 @@ function LogTypeBuilder() {
   }
 
   return (
-    <div>
+    <div className="page">
       <h1>Create Log Type</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -103,7 +105,7 @@ function LogTypeBuilder() {
               onClick={() => removeField(index)}
               disabled={fields.length === 1}
             >
-              Remove
+              <Trash2 size={ICON_SM} aria-hidden="true" /> Remove
             </button>
           </div>
         ))}

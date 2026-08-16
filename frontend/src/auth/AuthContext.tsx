@@ -6,6 +6,16 @@ import {
   type CognitoUserSession,
 } from 'amazon-cognito-identity-js'
 import { userPool } from './cognito'
+import { NetworkError } from '../api'
+
+// amazon-cognito-identity-js throws a plain Error with message 'Network
+// error' and sets `.code = 'NetworkError'` when its underlying request
+// fails due to connectivity (see node_modules/amazon-cognito-identity-js/
+// lib/Client.js) — converted to our shared NetworkError so callers can use
+// the same `err instanceof NetworkError` check as api.ts's apiFetch.
+function isCognitoNetworkError(err: unknown): boolean {
+  return err instanceof Error && (err as Error & { code?: string }).code === 'NetworkError'
+}
 
 export interface UserAttributes {
   email: string
@@ -152,9 +162,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return new Promise((resolve, reject) => {
       currentUser.getSession((sessionErr: Error | null, session: CognitoUserSession | null) => {
+        if (sessionErr && isCognitoNetworkError(sessionErr)) return reject(new NetworkError())
         if (sessionErr || !session) return resolve(null)
 
         currentUser.getUserAttributes((attrErr, attributes) => {
+          if (attrErr && isCognitoNetworkError(attrErr)) return reject(new NetworkError())
           if (attrErr || !attributes) return reject(attrErr)
 
           const byName = Object.fromEntries(attributes.map((a) => [a.getName(), a.getValue()]))

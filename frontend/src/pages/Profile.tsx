@@ -1,10 +1,14 @@
-import { useEffect, useState, type SubmitEvent } from 'react'
+import { useCallback, useEffect, useState, type SubmitEvent } from 'react'
 import { useNavigate } from 'react-router'
 import { LogOut, Trash2, Pencil, Check, X } from 'lucide-react'
 import { useAuth, type UserAttributes } from '../auth/AuthContext'
-import { deleteAccount } from '../api'
+import { deleteAccount, NetworkError } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
 import PasswordInput from '../components/PasswordInput'
+import OfflineMessage from '../components/OfflineMessage'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
+import { useOnlineRetry } from '../hooks/useOnlineRetry'
+import { ICON_SM } from '../iconSizes'
 
 // Stub: email change is out of scope for now (see roadmap.md backlog and
 // artifacts/updates/2026-08-05-account-details.md).
@@ -14,6 +18,8 @@ function Profile() {
   const [attributes, setAttributes] = useState<UserAttributes | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [networkError, setNetworkError] = useState(false)
+  const showLoading = useDelayedLoading(loading)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const [editingName, setEditingName] = useState(false)
@@ -28,10 +34,19 @@ function Profile() {
   const [passwordSubmitting, setPasswordSubmitting] = useState(false)
   const [passwordError, setPasswordError] = useState<string | null>(null)
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true)
+    setError(null)
+    setNetworkError(false)
     getUserAttributes()
       .then(setAttributes)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Could not load profile'))
+      .catch((err) => {
+        if (err instanceof NetworkError) {
+          setNetworkError(true)
+        } else {
+          setError(err instanceof Error ? err.message : 'Could not load profile')
+        }
+      })
       .finally(() => setLoading(false))
   }, [getUserAttributes])
 
@@ -100,6 +115,12 @@ function Profile() {
     }
   }
 
+  useEffect(() => {
+    load()
+  }, [load])
+
+  useOnlineRetry(load)
+
   function handleSignOut() {
     signOut()
     navigate('/')
@@ -121,10 +142,12 @@ function Profile() {
     }
   }
 
+  if (networkError) return <OfflineMessage />
+
   return (
     <div className="page">
       <h1>Profile</h1>
-      {loading && <LoadingMessage />}
+      {showLoading && <LoadingMessage />}
       {error && <ErrorMessage>{error}</ErrorMessage>}
       {attributes && (
         <dl className="profile-attrs">
@@ -144,17 +167,17 @@ function Profile() {
                   autoFocus
                 />
                 <button type="button" className="btn-icon" onClick={handleSaveName} disabled={nameSaving} aria-label="Save">
-                  <Check size={16} aria-hidden="true" />
+                  <Check size={ICON_SM} aria-hidden="true" />
                 </button>
                 <button type="button" className="btn-icon btn-icon-danger" onClick={handleCancelEditName} disabled={nameSaving} aria-label="Cancel">
-                  <X size={16} aria-hidden="true" />
+                  <X size={ICON_SM} aria-hidden="true" />
                 </button>
               </dd>
             ) : (
               <dd className="profile-attr-edit">
                 {attributes.displayName}
                 <button type="button" className="btn-icon" onClick={handleStartEditName} aria-label="Edit display name">
-                  <Pencil size={16} aria-hidden="true" />
+                  <Pencil size={ICON_SM} aria-hidden="true" />
                 </button>
               </dd>
             )}
@@ -204,7 +227,7 @@ function Profile() {
               <dd className="profile-attr-edit">
                 &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
                 <button type="button" className="btn-icon" onClick={handleStartChangePassword} aria-label="Change password">
-                  <Pencil size={16} aria-hidden="true" />
+                  <Pencil size={ICON_SM} aria-hidden="true" />
                 </button>
               </dd>
             )}
@@ -214,7 +237,7 @@ function Profile() {
       {nameError && <ErrorMessage>{nameError}</ErrorMessage>}
 
       <button type="button" onClick={handleSignOut}>
-        <LogOut size={16} aria-hidden="true" /> Sign out
+        <LogOut size={ICON_SM} aria-hidden="true" /> Sign out
       </button>
 
       <div className="danger-zone">
@@ -222,7 +245,7 @@ function Profile() {
         <p>Permanently deletes your account, along with all your log types and entries. This action cannot be undone.</p>
         {deleteError && <ErrorMessage>{deleteError}</ErrorMessage>}
         <button type="button" className="btn-danger" onClick={handleDeleteAccount}>
-          <Trash2 size={16} aria-hidden="true" /> Delete account
+          <Trash2 size={ICON_SM} aria-hidden="true" /> Delete account
         </button>
       </div>
     </div>

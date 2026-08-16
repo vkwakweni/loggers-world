@@ -23,6 +23,11 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
+  --content-width: 640px;
+  --content-width-wide: 1200px;
+  --cell-truncate-width: 240px;
+  --row-actions-gap: 12px;
+
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
@@ -67,6 +72,7 @@
 }
 
 :root[data-theme='light'] {
+  color-scheme: light;
   --text: #5a5142;
   --text-h: #2b2016;
   --bg: #f2e8cf;
@@ -89,6 +95,7 @@
 }
 
 :root[data-theme='dark'] {
+  color-scheme: dark;
   --text: #c7bfae;
   --text-h: #f3ede0;
   --bg: #1a1f16;
@@ -115,11 +122,7 @@
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  width: 100%;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -193,6 +196,9 @@ a {
 
 .status-loading {
   color: var(--text);
+  width: 100%;
+  justify-content: center;
+  padding: 40px 0;
 }
 
 .spin {
@@ -226,14 +232,36 @@ a {
   gap: 12px;
 }
 
+.offline-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-grow: 1;
+  padding: 24px;
+  text-align: center;
+  color: var(--text);
+
+  h1 {
+    margin: 0;
+  }
+
+  p {
+    max-width: 400px;
+  }
+}
+
 .page {
-  max-width: 640px;
+  width: 100%;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 24px;
   text-align: left;
+  box-sizing: border-box;
 
   &.wide {
-    max-width: 900px;
+    max-width: var(--content-width-wide);
   }
 
   section {
@@ -348,6 +376,17 @@ a {
   }
 }
 
+.card-list {
+  gap: 10px;
+}
+
+.card-row {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 8px 0 4px;
+  background: var(--bg);
+}
+
 button,
 .btn {
   font: inherit;
@@ -419,7 +458,6 @@ button[type='submit'] {
   h2 {
     margin: 0;
     color: var(--error);
-    font-size: 20px;
   }
 
   p {
@@ -436,9 +474,33 @@ button[type='submit'] {
   width: 100%;
 }
 
+.row-actions {
+  display: inline-flex;
+  align-items: center;
+}
+
+.row-actions-inline {
+  display: flex;
+  gap: var(--row-actions-gap);
+
+  .btn-label {
+    display: none;
+  }
+}
+
 .row-menu {
   position: relative;
-  display: inline-block;
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .row-actions-inline {
+    display: none;
+  }
+
+  .row-menu {
+    display: inline-block;
+  }
 }
 
 .row-menu-list {
@@ -494,8 +556,25 @@ button[type='submit'] {
   }
 }
 
+.btn-icon.btn-danger {
+  border: none;
+  background: none;
+  color: var(--error);
+
+  &:hover {
+    border-color: transparent;
+    background: var(--error-bg);
+    color: var(--error);
+  }
+}
+
 td a {
   color: var(--accent);
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
 }
 
 table {
@@ -509,6 +588,13 @@ td {
   padding: 10px 12px;
   text-align: left;
   border-bottom: 1px solid var(--border);
+}
+
+td.truncate {
+  max-width: var(--cell-truncate-width);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 th {
@@ -536,6 +622,10 @@ form {
   max-width: 420px;
   margin: 24px auto;
   text-align: left;
+
+  @media (max-width: 640px) {
+    gap: 12px;
+  }
 }
 
 label {
@@ -548,6 +638,7 @@ label {
   &:has(input[type='checkbox']) {
     flex-direction: row;
     align-items: center;
+    gap: 8px;
     width: auto;
   }
 }
@@ -570,7 +661,10 @@ select {
 }
 
 input[type='checkbox'] {
-  width: auto;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
 }
 
 .password-field {
@@ -609,17 +703,28 @@ input[type='checkbox'] {
     width: auto;
     flex: 1 1 140px;
   }
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    label {
+      width: 100%;
+      flex: none;
+    }
+
+    label:has(input[type='checkbox']) {
+      width: auto;
+    }
+  }
 }
 
-code,
-.counter {
+code {
   font-family: var(--mono);
   display: inline-flex;
   border-radius: 4px;
   color: var(--text-h);
-}
-
-code {
   font-size: 15px;
   line-height: 135%;
   padding: 4px 8px;

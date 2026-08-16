@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { Plus, Eye, EyeOff, Trash2 } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
-import { listLogTypes, archiveLogType, deleteLogType, type LogType } from '../api'
+import { listLogTypes, archiveLogType, deleteLogType, NetworkError, type LogType } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import OfflineMessage from '../components/OfflineMessage'
 import RowMenu from '../components/RowMenu'
+import { useDelayedLoading } from '../hooks/useDelayedLoading'
+import { useOnlineRetry } from '../hooks/useOnlineRetry'
+import { ICON_SM } from '../iconSizes'
 
 function Dashboard() {
   const { getAccessToken } = useAuth()
@@ -12,21 +16,33 @@ function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [networkError, setNetworkError] = useState(false)
+  const showLoading = useDelayedLoading(loading)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    setNetworkError(false)
+    try {
+      const accessToken = await getAccessToken()
+      if (!accessToken) throw new Error('Not signed in')
+      setLogTypes(await listLogTypes(accessToken))
+    } catch (err) {
+      if (err instanceof NetworkError) {
+        setNetworkError(true)
+      } else {
+        setError(err instanceof Error ? err.message : 'Could not load log types')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }, [getAccessToken])
 
   useEffect(() => {
-    async function load() {
-      try {
-        const accessToken = await getAccessToken()
-        if (!accessToken) throw new Error('Not signed in')
-        setLogTypes(await listLogTypes(accessToken))
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Could not load log types')
-      } finally {
-        setLoading(false)
-      }
-    }
     load()
-  }, [getAccessToken])
+  }, [load])
+
+  useOnlineRetry(load)
 
   async function handleArchiveToggle(logType: LogType) {
     setActionError(null)
@@ -56,29 +72,43 @@ function Dashboard() {
     }
   }
 
+  if (networkError) return <OfflineMessage />
+
   const activeTypes = logTypes.filter((t) => !t.archived)
   const archivedTypes = logTypes.filter((t) => t.archived)
 
   function renderLogTypeList(types: LogType[]) {
+    if (types.length === 0) return null
+
     return (
-      <ul>
+      <ul className="card-list">
         {types.map((logType) => (
-          <li key={logType.typeId}>
+          <li key={logType.typeId} className="card-row">
             <Link to={`/log-types/${logType.typeId}`}>{logType.name}</Link>
             <RowMenu label={`Actions for ${logType.name}`}>
-              <button type="button" onClick={() => handleArchiveToggle(logType)}>
+              <button
+                type="button"
+                className="btn-icon"
+                aria-label={logType.archived ? 'Unarchive' : 'Archive'}
+                onClick={() => handleArchiveToggle(logType)}
+              >
                 {logType.archived ? (
                   <>
-                    <Eye size={16} aria-hidden="true" /> Unarchive
+                    <Eye size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
                   </>
                 ) : (
                   <>
-                    <EyeOff size={16} aria-hidden="true" /> Archive
+                    <EyeOff size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Archive</span>
                   </>
                 )}
               </button>
-              <button type="button" onClick={() => handleDelete(logType)}>
-                <Trash2 size={16} aria-hidden="true" /> Delete
+              <button
+                type="button"
+                className="btn-icon btn-danger"
+                aria-label="Delete"
+                onClick={() => handleDelete(logType)}
+              >
+                <Trash2 size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Delete</span>
               </button>
             </RowMenu>
           </li>
@@ -93,9 +123,9 @@ function Dashboard() {
       <section>
         <h2>My Log Types</h2>
         <Link to="/log-types/new" className="btn btn-primary">
-          <Plus size={16} aria-hidden="true" /> New Log Type
+          <Plus size={ICON_SM} aria-hidden="true" /> New Log Type
         </Link>
-        {loading && <LoadingMessage />}
+        {showLoading && <LoadingMessage />}
         {error && <ErrorMessage>{error}</ErrorMessage>}
         {actionError && <ErrorMessage>{actionError}</ErrorMessage>}
         {!loading && !error && activeTypes.length === 0 && <p className="empty-state">No log types yet.</p>}
