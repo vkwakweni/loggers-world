@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router'
-import { LayoutDashboard, User, Trees, UserPlus, LogIn } from 'lucide-react'
+import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router'
+import { LayoutDashboard, User, Trees, UserPlus, LogIn, Menu } from 'lucide-react'
 import LandingPage from './pages/LandingPage'
 import SignUp from './pages/SignUp'
 import Login from './pages/Login'
@@ -13,38 +13,64 @@ import NotFound from './pages/NotFound'
 import ProtectedRoute from './auth/ProtectedRoute'
 import PublicOnlyRoute from './auth/PublicOnlyRoute'
 import { useAuth } from './auth/AuthContext'
+import { useDismissableMenu } from './hooks/useDismissableMenu'
+import LogWoodIcon from './components/LogWoodIcon'
 import ThemeToggle from './ThemeToggle'
 import './App.css'
 
 function Nav() {
   const { isAuthenticated } = useAuth()
+  const { open, setOpen, ref } = useDismissableMenu<HTMLDivElement>()
 
-  if (isAuthenticated) {
-    return (
-      <nav>
-        <NavLink to="/dashboard">
-          <LayoutDashboard size={16} aria-hidden="true" /> Dashboard
-        </NavLink>
-        <NavLink to="/profile">
-          <User size={16} aria-hidden="true" /> Profile
-        </NavLink>
-        <ThemeToggle />
-      </nav>
-    )
-  }
+  const navLinks = isAuthenticated ? (
+    <>
+      <NavLink to="/dashboard" onClick={() => setOpen(false)}>
+        <LayoutDashboard size={16} aria-hidden="true" /> Dashboard
+      </NavLink>
+      <NavLink to="/profile" onClick={() => setOpen(false)}>
+        <User size={16} aria-hidden="true" /> Profile
+      </NavLink>
+    </>
+  ) : (
+    <>
+      <NavLink to="/" onClick={() => setOpen(false)}>
+        <Trees size={16} aria-hidden="true" /> Landing
+      </NavLink>
+      <NavLink to="/signup" onClick={() => setOpen(false)}>
+        <UserPlus size={16} aria-hidden="true" /> Sign Up
+      </NavLink>
+      <NavLink to="/login" onClick={() => setOpen(false)}>
+        <LogIn size={16} aria-hidden="true" /> Log In
+      </NavLink>
+    </>
+  )
 
   return (
     <nav>
-      <NavLink to="/">
-        <Trees size={16} aria-hidden="true" /> Landing
-      </NavLink>
-      <NavLink to="/signup">
-        <UserPlus size={16} aria-hidden="true" /> Sign Up
-      </NavLink>
-      <NavLink to="/login">
-        <LogIn size={16} aria-hidden="true" /> Log In
-      </NavLink>
-      <ThemeToggle />
+      <Link to={isAuthenticated ? '/dashboard' : '/'} className="brand" onClick={() => setOpen(false)}>
+        <LogWoodIcon aria-hidden="true" className="brand-icon" />
+        Logger's World
+      </Link>
+      <div className="nav-links">
+        {navLinks}
+        <ThemeToggle />
+      </div>
+      <div className="nav-menu" ref={ref}>
+        <button
+          type="button"
+          className="btn-icon"
+          aria-label="Menu"
+          aria-haspopup="menu"
+          aria-expanded={open}
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          <Menu size={20} aria-hidden="true" />
+        </button>
+        <div className={open ? 'nav-menu-list open' : 'nav-menu-list'} role="menu" aria-hidden={!open}>
+          {navLinks}
+          <ThemeToggle showLabel />
+        </div>
+      </div>
     </nav>
   )
 }

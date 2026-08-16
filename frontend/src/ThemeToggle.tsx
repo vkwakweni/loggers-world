@@ -1,33 +1,17 @@
-import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
+import { useTheme } from './ThemeContext'
 
-type Theme = 'light' | 'dark'
-
-function getInitialTheme(): Theme {
-  const stored = localStorage.getItem('theme')
-  if (stored === 'light' || stored === 'dark') return stored
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+interface ThemeToggleProps {
+  showLabel?: boolean
 }
 
-function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme)
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    localStorage.setItem('theme', theme)
-  }, [theme])
-
-  function toggle() {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
-  }
+function ThemeToggle({ showLabel = false }: ThemeToggleProps) {
+  const { theme, toggle } = useTheme()
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-    >
+    <button type="button" onClick={toggle} aria-label={showLabel ? undefined : 'Toggle mode'}>
       {theme === 'dark' ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
+      {showLabel && 'Toggle mode'}
     </button>
   )
 }

@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { MoreVertical } from 'lucide-react'
+import { useDismissableMenu } from '../hooks/useDismissableMenu'
 
 interface RowMenuProps {
   label: string
@@ -7,26 +8,7 @@ interface RowMenuProps {
 }
 
 function RowMenu({ label, children }: RowMenuProps) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-
-    function handleClickOutside(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false)
-    }
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false)
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscape)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [open])
+  const { open, setOpen, ref } = useDismissableMenu<HTMLDivElement>()
 
   return (
     <div className="row-actions">
