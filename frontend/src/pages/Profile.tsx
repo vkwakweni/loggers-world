@@ -167,17 +167,17 @@ function Profile() {
                   autoFocus
                 />
                 <button type="button" className="btn-icon" onClick={handleSaveName} disabled={nameSaving} aria-label="Save">
-                  <Check size={16} aria-hidden="true" />
+                  <Check size={ICON_SM} aria-hidden="true" />
                 </button>
                 <button type="button" className="btn-icon btn-icon-danger" onClick={handleCancelEditName} disabled={nameSaving} aria-label="Cancel">
-                  <X size={16} aria-hidden="true" />
+                  <X size={ICON_SM} aria-hidden="true" />
                 </button>
               </dd>
             ) : (
               <dd className="profile-attr-edit">
                 {attributes.displayName}
                 <button type="button" className="btn-icon" onClick={handleStartEditName} aria-label="Edit display name">
-                  <Pencil size={16} aria-hidden="true" />
+                  <Pencil size={ICON_SM} aria-hidden="true" />
                 </button>
               </dd>
             )}
@@ -227,7 +227,7 @@ function Profile() {
               <dd className="profile-attr-edit">
                 &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;
                 <button type="button" className="btn-icon" onClick={handleStartChangePassword} aria-label="Change password">
-                  <Pencil size={16} aria-hidden="true" />
+                  <Pencil size={ICON_SM} aria-hidden="true" />
                 </button>
               </dd>
             )}
