@@ -29,24 +29,27 @@ function RowMenu({ label, children }: RowMenuProps) {
   }, [open])
 
   return (
-    <div className="row-menu" ref={ref}>
-      <button
-        type="button"
-        className="btn-icon"
-        aria-label={label}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((prev) => !prev)}
-      >
-        <MoreVertical size={20} aria-hidden="true" />
-      </button>
-      <div
-        className={open ? 'row-menu-list open' : 'row-menu-list'}
-        role="menu"
-        aria-hidden={!open}
-        onClick={() => setOpen(false)}
-      >
-        {children}
+    <div className="row-actions">
+      <div className="row-actions-inline">{children}</div>
+      <div className="row-menu" ref={ref}>
+        <button
+          type="button"
+          className="btn-icon"
+          aria-label={label}
+          aria-haspopup="menu"
+          aria-expanded={open}
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          <MoreVertical size={20} aria-hidden="true" />
+        </button>
+        <div
+          className={open ? 'row-menu-list open' : 'row-menu-list'}
+          role="menu"
+          aria-hidden={!open}
+          onClick={() => setOpen(false)}
+        >
+          {children}
+        </div>
       </div>
     </div>
   )

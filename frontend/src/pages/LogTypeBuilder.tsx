@@ -58,7 +58,7 @@ function LogTypeBuilder() {
   }
 
   return (
-    <div>
+    <div className="page">
       <h1>Create Log Type</h1>
       <form onSubmit={handleSubmit}>
         <label>

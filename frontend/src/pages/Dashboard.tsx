@@ -77,25 +77,37 @@ function Dashboard() {
   const archivedTypes = logTypes.filter((t) => t.archived)
 
   function renderLogTypeList(types: LogType[]) {
+    if (types.length === 0) return null
+
     return (
-      <ul>
+      <ul className="card-list">
         {types.map((logType) => (
-          <li key={logType.typeId}>
+          <li key={logType.typeId} className="card-row">
             <Link to={`/log-types/${logType.typeId}`}>{logType.name}</Link>
             <RowMenu label={`Actions for ${logType.name}`}>
-              <button type="button" onClick={() => handleArchiveToggle(logType)}>
+              <button
+                type="button"
+                className="btn-icon"
+                aria-label={logType.archived ? 'Unarchive' : 'Archive'}
+                onClick={() => handleArchiveToggle(logType)}
+              >
                 {logType.archived ? (
                   <>
-                    <Eye size={16} aria-hidden="true" /> Unarchive
+                    <Eye size={16} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
                   </>
                 ) : (
                   <>
-                    <EyeOff size={16} aria-hidden="true" /> Archive
+                    <EyeOff size={16} aria-hidden="true" /> <span className="btn-label">Archive</span>
                   </>
                 )}
               </button>
-              <button type="button" onClick={() => handleDelete(logType)}>
-                <Trash2 size={16} aria-hidden="true" /> Delete
+              <button
+                type="button"
+                className="btn-icon btn-danger"
+                aria-label="Delete"
+                onClick={() => handleDelete(logType)}
+              >
+                <Trash2 size={16} aria-hidden="true" /> <span className="btn-label">Delete</span>
               </button>
             </RowMenu>
           </li>

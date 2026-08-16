@@ -119,19 +119,24 @@ function LogTypeEntries() {
       <div className="page-header">
         <h1>{logType.name} Entries</h1>
         <RowMenu label={`Actions for ${logType.name}`}>
-          <button type="button" onClick={handleArchiveToggle}>
+          <button
+            type="button"
+            className="btn-icon"
+            aria-label={logType.archived ? 'Unarchive' : 'Archive'}
+            onClick={handleArchiveToggle}
+          >
             {logType.archived ? (
               <>
-                <Eye size={16} aria-hidden="true" /> Unarchive
+                <Eye size={16} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
               </>
             ) : (
               <>
-                <EyeOff size={16} aria-hidden="true" /> Archive
+                <EyeOff size={16} aria-hidden="true" /> <span className="btn-label">Archive</span>
               </>
             )}
           </button>
-          <button type="button" onClick={handleTypeDelete}>
-            <Trash2 size={16} aria-hidden="true" /> Delete
+          <button type="button" className="btn-icon btn-danger" aria-label="Delete" onClick={handleTypeDelete}>
+            <Trash2 size={16} aria-hidden="true" /> <span className="btn-label">Delete</span>
           </button>
         </RowMenu>
       </div>
@@ -145,41 +150,43 @@ function LogTypeEntries() {
       {entries.length === 0 ? (
         <p className="empty-state">No entries yet.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              {logType.fields.map((field) => (
-                <th key={field.name}>{field.name}</th>
-              ))}
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entries.map((entry) => (
-              <tr key={entry.entryId}>
-                {logType.fields.map((field) => {
-                  const value = entry.fields[field.name] ?? ''
-                  return (
-                    <td key={field.name} className="truncate" title={String(value)}>
-                      {value}
-                    </td>
-                  )
-                })}
-                <td>
-                  <Link to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}>
-                    <Pencil size={16} aria-hidden="true" /> Edit
-                  </Link>
-                </td>
-                <td>
-                  <button type="button" className="btn-danger" onClick={() => handleDelete(entry)}>
-                    <Trash2 size={16} aria-hidden="true" /> Delete
-                  </button>
-                </td>
+        <div className="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                {logType.fields.map((field) => (
+                  <th key={field.name}>{field.name}</th>
+                ))}
+                <th>Edit</th>
+                <th>Delete</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {entries.map((entry) => (
+                <tr key={entry.entryId}>
+                  {logType.fields.map((field) => {
+                    const value = entry.fields[field.name] ?? ''
+                    return (
+                      <td key={field.name} className="truncate" title={String(value)}>
+                        {value}
+                      </td>
+                    )
+                  })}
+                  <td>
+                    <Link to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}>
+                      <Pencil size={16} aria-hidden="true" /> Edit
+                    </Link>
+                  </td>
+                  <td>
+                    <button type="button" className="btn-danger" onClick={() => handleDelete(entry)}>
+                      <Trash2 size={16} aria-hidden="true" /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

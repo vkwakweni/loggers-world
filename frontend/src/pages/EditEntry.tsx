@@ -95,7 +95,7 @@ function EditEntry() {
   if (!logType) return null
 
   return (
-    <div>
+    <div className="page">
       <h1>Edit {logType.name} Entry</h1>
       <form onSubmit={handleSubmit}>
         {logType.fields.map((field) => (
