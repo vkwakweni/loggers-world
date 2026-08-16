@@ -1,5 +1,6 @@
 import { useState, type InputHTMLAttributes } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
+import { ICON_SM } from '../iconSizes'
 
 function PasswordInput(props: Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>) {
   const [visible, setVisible] = useState(false)
@@ -13,7 +14,7 @@ function PasswordInput(props: Omit<InputHTMLAttributes<HTMLInputElement>, 'type'
         onClick={() => setVisible((v) => !v)}
         aria-label={visible ? 'Hide password' : 'Show password'}
       >
-        {visible ? <EyeOff size={16} aria-hidden="true" /> : <Eye size={16} aria-hidden="true" />}
+        {visible ? <EyeOff size={ICON_SM} aria-hidden="true" /> : <Eye size={ICON_SM} aria-hidden="true" />}
       </button>
     </span>
   )

@@ -16,6 +16,7 @@ import { useAuth } from './auth/AuthContext'
 import { useDismissableMenu } from './hooks/useDismissableMenu'
 import LogWoodIcon from './components/LogWoodIcon'
 import ThemeToggle from './ThemeToggle'
+import { ICON_SM, ICON_MD } from './iconSizes'
 import './App.css'
 
 function Nav() {
@@ -25,22 +26,22 @@ function Nav() {
   const navLinks = isAuthenticated ? (
     <>
       <NavLink to="/dashboard" onClick={() => setOpen(false)}>
-        <LayoutDashboard size={16} aria-hidden="true" /> Dashboard
+        <LayoutDashboard size={ICON_SM} aria-hidden="true" /> Dashboard
       </NavLink>
       <NavLink to="/profile" onClick={() => setOpen(false)}>
-        <User size={16} aria-hidden="true" /> Profile
+        <User size={ICON_SM} aria-hidden="true" /> Profile
       </NavLink>
     </>
   ) : (
     <>
       <NavLink to="/" onClick={() => setOpen(false)}>
-        <Trees size={16} aria-hidden="true" /> Landing
+        <Trees size={ICON_SM} aria-hidden="true" /> Landing
       </NavLink>
       <NavLink to="/signup" onClick={() => setOpen(false)}>
-        <UserPlus size={16} aria-hidden="true" /> Sign Up
+        <UserPlus size={ICON_SM} aria-hidden="true" /> Sign Up
       </NavLink>
       <NavLink to="/login" onClick={() => setOpen(false)}>
-        <LogIn size={16} aria-hidden="true" /> Log In
+        <LogIn size={ICON_SM} aria-hidden="true" /> Log In
       </NavLink>
     </>
   )
@@ -64,7 +65,7 @@ function Nav() {
           aria-expanded={open}
           onClick={() => setOpen((prev) => !prev)}
         >
-          <Menu size={20} aria-hidden="true" />
+          <Menu size={ICON_MD} aria-hidden="true" />
         </button>
         <div className={open ? 'nav-menu-list open' : 'nav-menu-list'} role="menu" aria-hidden={!open}>
           {navLinks}

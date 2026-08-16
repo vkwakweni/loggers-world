@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { MoreVertical } from 'lucide-react'
 import { useDismissableMenu } from '../hooks/useDismissableMenu'
+import { ICON_MD } from '../iconSizes'
 
 interface RowMenuProps {
   label: string
@@ -22,7 +23,7 @@ function RowMenu({ label, children }: RowMenuProps) {
           aria-expanded={open}
           onClick={() => setOpen((prev) => !prev)}
         >
-          <MoreVertical size={20} aria-hidden="true" />
+          <MoreVertical size={ICON_MD} aria-hidden="true" />
         </button>
         <div
           className={open ? 'row-menu-list open' : 'row-menu-list'}

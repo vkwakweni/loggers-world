@@ -8,6 +8,7 @@ import PasswordInput from '../components/PasswordInput'
 import OfflineMessage from '../components/OfflineMessage'
 import { useDelayedLoading } from '../hooks/useDelayedLoading'
 import { useOnlineRetry } from '../hooks/useOnlineRetry'
+import { ICON_SM } from '../iconSizes'
 
 // Stub: email change is out of scope for now (see roadmap.md backlog and
 // artifacts/updates/2026-08-05-account-details.md).
@@ -236,7 +237,7 @@ function Profile() {
       {nameError && <ErrorMessage>{nameError}</ErrorMessage>}
 
       <button type="button" onClick={handleSignOut}>
-        <LogOut size={16} aria-hidden="true" /> Sign out
+        <LogOut size={ICON_SM} aria-hidden="true" /> Sign out
       </button>
 
       <div className="danger-zone">
@@ -244,7 +245,7 @@ function Profile() {
         <p>Permanently deletes your account, along with all your log types and entries. This action cannot be undone.</p>
         {deleteError && <ErrorMessage>{deleteError}</ErrorMessage>}
         <button type="button" className="btn-danger" onClick={handleDeleteAccount}>
-          <Trash2 size={16} aria-hidden="true" /> Delete account
+          <Trash2 size={ICON_SM} aria-hidden="true" /> Delete account
         </button>
       </div>
     </div>

@@ -1,9 +1,10 @@
 import { WifiOff } from 'lucide-react'
+import { ICON_LG } from '../iconSizes'
 
 function OfflineMessage() {
   return (
     <div className="offline-state" role="alert">
-      <WifiOff size={48} aria-hidden="true" />
+      <WifiOff size={ICON_LG} aria-hidden="true" />
       <h1>You're offline</h1>
       <p>Check your internet connection. This page will reload automatically once you're back online.</p>
     </div>

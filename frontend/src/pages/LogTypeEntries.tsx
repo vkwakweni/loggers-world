@@ -17,6 +17,7 @@ import OfflineMessage from '../components/OfflineMessage'
 import RowMenu from '../components/RowMenu'
 import { useDelayedLoading } from '../hooks/useDelayedLoading'
 import { useOnlineRetry } from '../hooks/useOnlineRetry'
+import { ICON_SM } from '../iconSizes'
 
 function LogTypeEntries() {
   const { typeId } = useParams<{ typeId: string }>()
@@ -127,21 +128,21 @@ function LogTypeEntries() {
           >
             {logType.archived ? (
               <>
-                <Eye size={16} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
+                <Eye size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
               </>
             ) : (
               <>
-                <EyeOff size={16} aria-hidden="true" /> <span className="btn-label">Archive</span>
+                <EyeOff size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Archive</span>
               </>
             )}
           </button>
           <button type="button" className="btn-icon btn-danger" aria-label="Delete" onClick={handleTypeDelete}>
-            <Trash2 size={16} aria-hidden="true" /> <span className="btn-label">Delete</span>
+            <Trash2 size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Delete</span>
           </button>
         </RowMenu>
       </div>
       <Link to={`/log-types/${typeId}/entries/new`} className="btn btn-primary">
-        <Plus size={16} aria-hidden="true" /> Add entry
+        <Plus size={ICON_SM} aria-hidden="true" /> Add entry
       </Link>
 
       {actionError && <ErrorMessage>{actionError}</ErrorMessage>}
@@ -173,13 +174,17 @@ function LogTypeEntries() {
                     )
                   })}
                   <td>
-                    <Link to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}>
-                      <Pencil size={16} aria-hidden="true" /> Edit
+                    <Link
+                      to={`/log-types/${typeId}/entries/${encodeURIComponent(entry.createdAt)}/edit`}
+                      className="btn"
+                      aria-label="Edit"
+                    >
+                      <Pencil size={ICON_SM} aria-hidden="true" />
                     </Link>
                   </td>
                   <td>
-                    <button type="button" className="btn-danger" onClick={() => handleDelete(entry)}>
-                      <Trash2 size={16} aria-hidden="true" /> Delete
+                    <button type="button" className="btn-danger" aria-label="Delete" onClick={() => handleDelete(entry)}>
+                      <Trash2 size={ICON_SM} aria-hidden="true" />
                     </button>
                   </td>
                 </tr>

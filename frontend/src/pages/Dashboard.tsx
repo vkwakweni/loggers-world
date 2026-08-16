@@ -8,6 +8,7 @@ import OfflineMessage from '../components/OfflineMessage'
 import RowMenu from '../components/RowMenu'
 import { useDelayedLoading } from '../hooks/useDelayedLoading'
 import { useOnlineRetry } from '../hooks/useOnlineRetry'
+import { ICON_SM } from '../iconSizes'
 
 function Dashboard() {
   const { getAccessToken } = useAuth()
@@ -93,11 +94,11 @@ function Dashboard() {
               >
                 {logType.archived ? (
                   <>
-                    <Eye size={16} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
+                    <Eye size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Unarchive</span>
                   </>
                 ) : (
                   <>
-                    <EyeOff size={16} aria-hidden="true" /> <span className="btn-label">Archive</span>
+                    <EyeOff size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Archive</span>
                   </>
                 )}
               </button>
@@ -107,7 +108,7 @@ function Dashboard() {
                 aria-label="Delete"
                 onClick={() => handleDelete(logType)}
               >
-                <Trash2 size={16} aria-hidden="true" /> <span className="btn-label">Delete</span>
+                <Trash2 size={ICON_SM} aria-hidden="true" /> <span className="btn-label">Delete</span>
               </button>
             </RowMenu>
           </li>
@@ -122,7 +123,7 @@ function Dashboard() {
       <section>
         <h2>My Log Types</h2>
         <Link to="/log-types/new" className="btn btn-primary">
-          <Plus size={16} aria-hidden="true" /> New Log Type
+          <Plus size={ICON_SM} aria-hidden="true" /> New Log Type
         </Link>
         {showLoading && <LoadingMessage />}
         {error && <ErrorMessage>{error}</ErrorMessage>}
