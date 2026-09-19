@@ -103,7 +103,8 @@ last-updated: 2026-08-17
 - Entry filtering: let the user narrow the entry list by field value or date range, beyond the default chronological view shipped in Day 5
 - ~~Entry table cell overflow~~ — resolved by the [2026-08-06 UI Polish update](updates/2026-08-06-ui-polish.md): capped column width, `text-overflow: ellipsis` truncation, full value on hover via `title`
 - ~~Account deletion~~ — resolved by the [2026-07-29 Deletion & Archiving update](updates/2026-07-29-deletion-and-archiving.md): cascades all owned `LogType`/`LogEntry` items, then deletes the Cognito user
-- Updating account details: `/profile` is currently read-only (email + display name display, per the Day-4 stub comment in `Profile.tsx`) — no way to change display name, email, or password from the UI
+- ~~Updating account details~~ — partly resolved by the [2026-08-05 Account Details update](updates/2026-08-05-account-details.md): editable display name and a password-change flow, both direct to Cognito with no backend work
+- Email change: deliberately left out of the Account Details update — this pool's `UsernameAttributes` is `[email]`, so email is the Cognito username, and changing it needs a confirmation-code re-verification flow (same shape as sign-up) plus a pending-change UI state, materially bigger and riskier than the display name and password changes
 - Session expiry: log in should expire after 2 weeks of inactivity, rather than staying valid indefinitely — needs a decision on mechanism (Cognito refresh token TTL config vs. client-side inactivity tracking)
 - ~~Mobile view~~ — resolved by the [2026-08-06 UI Polish update](updates/2026-08-06-ui-polish.md): full mobile/responsive walkthrough across every page
 - Date entry format: change to dd/mm/yyyy. Currently input is mm/dd/yyyy (only the input, not the display) and display is yyyy-mm-dd
