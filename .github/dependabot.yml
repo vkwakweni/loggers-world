@@ -1,0 +1,67 @@
+version: 2
+
+# Weekly, grouped, minor-and-patch only. Major bumps are ignored on purpose:
+# several dependencies sit on very new majors, and the frontend has no
+# component tests, so a green CI does not prove a major upgrade is safe.
+# Review majors by hand.
+#
+# Every merge to main runs `cdk deploy`, so updates are batched into one PR
+# per ecosystem per week rather than one PR per package.
+
+updates:
+  - package-ecosystem: npm
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels: [dependencies]
+    commit-message:
+      prefix: deps
+    groups:
+      backend-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels: [dependencies]
+    commit-message:
+      prefix: deps
+    groups:
+      frontend-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: npm
+    directory: /infra
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels: [dependencies]
+    commit-message:
+      prefix: deps
+    groups:
+      infra-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels: [dependencies]
+    commit-message:
+      prefix: deps
+    groups:
+      actions-minor-and-patch:
+        update-types: [minor, patch]
