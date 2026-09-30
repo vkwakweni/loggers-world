@@ -27,7 +27,7 @@ function Login() {
   }
 
   return (
-    <div className="page">
+    <div className="page auth-page">
       <h1>Log In</h1>
       <form onSubmit={handleSubmit}>
         <label>

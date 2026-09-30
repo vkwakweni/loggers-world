@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Link, NavLink } from 'react-router'
-import { LayoutDashboard, User, Trees, UserPlus, LogIn, Menu } from 'lucide-react'
+import { LayoutDashboard, User, Trees, UserPlus, LogIn, Menu, Bird } from 'lucide-react'
 import LandingPage from './pages/LandingPage'
 import SignUp from './pages/SignUp'
 import Login from './pages/Login'
@@ -9,6 +9,7 @@ import LogTypeBuilder from './pages/LogTypeBuilder'
 import LogTypeEntries from './pages/LogTypeEntries'
 import CreateEntry from './pages/CreateEntry'
 import EditEntry from './pages/EditEntry'
+import Chorus from './pages/Chorus'
 import NotFound from './pages/NotFound'
 import ProtectedRoute from './auth/ProtectedRoute'
 import PublicOnlyRoute from './auth/PublicOnlyRoute'
@@ -17,6 +18,7 @@ import { useDismissableMenu } from './hooks/useDismissableMenu'
 import LogWoodIcon from './components/LogWoodIcon'
 import ThemeToggle from './ThemeToggle'
 import { ICON_SM, ICON_MD } from './iconSizes'
+import { isChorusEnabled } from './chorus'
 import './App.css'
 
 function Nav() {
@@ -28,6 +30,11 @@ function Nav() {
       <NavLink to="/dashboard" onClick={() => setOpen(false)}>
         <LayoutDashboard size={ICON_SM} aria-hidden="true" /> Dashboard
       </NavLink>
+      {isChorusEnabled && (
+        <NavLink to="/wonder" onClick={() => setOpen(false)}>
+          <Bird size={ICON_SM} aria-hidden="true" /> Wonder
+        </NavLink>
+      )}
       <NavLink to="/profile" onClick={() => setOpen(false)}>
         <User size={ICON_SM} aria-hidden="true" /> Profile
       </NavLink>
@@ -76,6 +83,24 @@ function Nav() {
   )
 }
 
+function Footer() {
+  const { isAuthenticated } = useAuth()
+  if (isAuthenticated) return null
+
+  return (
+    <footer className="site-footer">
+      <span className="footer-brand">
+        <LogWoodIcon aria-hidden="true" className="brand-icon" />
+        Logger's World
+      </span>
+      <span>
+        Made by Vuyo Kwakweni · <a href="https://github.com/vkwakweni/loggers-world">Source on GitHub</a> ·{' '}
+        <a href="https://polyformproject.org/licenses/noncommercial/1.0.0">PolyForm Noncommercial</a>
+      </span>
+    </footer>
+  )
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -88,6 +113,7 @@ function App() {
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/wonder" element={<Chorus />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/log-types/new" element={<LogTypeBuilder />} />
           <Route path="/log-types/:typeId" element={<LogTypeEntries />} />
@@ -96,6 +122,7 @@ function App() {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   )
 }
