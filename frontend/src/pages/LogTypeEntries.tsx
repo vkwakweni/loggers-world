@@ -13,6 +13,7 @@ import {
   type LogEntry,
 } from '../api'
 import { ErrorMessage, LoadingMessage } from '../components/StatusMessage'
+import { formatDate } from '../formatDate'
 import OfflineMessage from '../components/OfflineMessage'
 import RowMenu from '../components/RowMenu'
 import { useDelayedLoading } from '../hooks/useDelayedLoading'
@@ -166,7 +167,8 @@ function LogTypeEntries() {
               {entries.map((entry) => (
                 <tr key={entry.entryId}>
                   {logType.fields.map((field) => {
-                    const value = entry.fields[field.name] ?? ''
+                    const raw = entry.fields[field.name] ?? ''
+                    const value = field.type === 'date' ? formatDate(String(raw)) : raw
                     return (
                       <td key={field.name} className="truncate" title={String(value)}>
                         {value}
