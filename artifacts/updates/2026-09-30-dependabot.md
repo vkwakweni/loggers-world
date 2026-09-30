@@ -1,7 +1,8 @@
 ---
 title: "Update: Dependabot"
-status: in-progress
+status: done
 started: 2026-09-30
+completed: 2026-09-30
 ---
 
 # Dependabot
@@ -19,9 +20,9 @@ Fifth post-v1 update. Adds GitHub's Dependabot so outdated dependencies surface 
 ## Implementation checklist
 
 - [x] Add `.github/dependabot.yml` for the three npm folders and GitHub Actions
-- [ ] Merge to `main` (Dependabot only reads the config from the default branch)
-- [ ] Confirm the first round of PRs arrives and CI runs on them
-- [ ] Decide whether to enable Dependabot security updates in the repository settings (separate from this file)
+- [x] Merge to `main` (Dependabot only reads the config from the default branch)
+- [x] Confirm the first round of PRs arrives and CI runs on them
+- [ ] Decide whether to enable Dependabot security updates in the repository settings (separate from this file): still open, see Follow-ups
 
 ## Testing
 
@@ -30,3 +31,17 @@ The YAML parses and lists the four ecosystems. The real test is the first schedu
 ## Deployment
 
 None. The file only takes effect on `main`, and merging it runs the usual CI and `cdk deploy`, which changes no infrastructure.
+
+## Outcome
+
+Merged as [PR #12](https://github.com/vkwakweni/loggers-world/pull/12). Dependabot opened six PRs within minutes (three Actions bumps, three grouped npm updates), all merged the same day.
+
+- The config asked for a `dependencies` label the repo did not have, so Dependabot commented an error on each PR. Fixed by creating the label and applying it to the open PRs; the stale comments remain on the merged PRs.
+- `@dependabot recreate` answers with a 👍 reaction and a force-push of the branch, not a comment.
+- Merging all six within about two minutes started overlapping `cdk deploy` runs, and the last failed with `UPDATE_IN_PROGRESS`; a manual re-run succeeded.
+
+## Follow-ups
+
+- Serialise `cdk deploy` with a `concurrency` group on the `deploy` job in `ci.yml` (see `roadmap.md`'s backlog) before the next weekly batch of PRs. Until then, merge deploy-triggering PRs one at a time.
+- Decide on enabling Dependabot security updates (repository settings; currently disabled). The `semver-major` ignore rules affect version updates only, so security fixes needing a major bump would still be offered.
+- Major Actions bumps are not ignored on purpose; `configure-aws-credentials` is the one that can break `deploy`, so read its release notes before merging.

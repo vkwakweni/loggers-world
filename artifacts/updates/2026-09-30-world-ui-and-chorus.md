@@ -1,7 +1,8 @@
 ---
 title: "Update: Enticing UI and Turaco Chorus Integration"
-status: in-progress
+status: done
 started: 2026-09-30
+completed: 2026-09-30
 ---
 
 # Enticing UI and Turaco Chorus Integration
@@ -53,8 +54,14 @@ Frontend only, via Amplify on merge to `main`. `VITE_CHORUS_URL` stays unset in 
 - The category-over-time chart is a workaround for `/stats` returning each dimension independently. A real cross-dimension aggregate is recorded as a development item in Turaco Chorus's `roadmap.md` (under "Config & architecture ideas"), with the open design questions.
 - Per-period calls use inclusive `from`/`to` bounds and non-overlapping periods, so counts add up. Period bounds are in the user's local calendar; Turaco Chorus compares them with the UTC date of each entry's `createdAt`, so an entry saved near midnight can land in the neighbouring period.
 
-## Outstanding
+## Outcome
 
-- Manual browser walkthrough of the dashboard and Chorus page while signed in (only the landing page has been visually checked, headless, at desktop and mobile widths).
-- Run a local Turaco Chorus with `AllowedOrigins=http://localhost:5173` and set `VITE_CHORUS_URL` in `frontend/.env`.
-- CI green on the branch before merge.
+Merged as [PR #11](https://github.com/vkwakweni/loggers-world/pull/11) (eight commits kept by a rebase merge), CI and `cdk deploy` green on `main`. The dashboard and Wonder page were walked through signed in, against a locally run Turaco Chorus (consent, ask, stats, chart). One real failure along the way was a temporary Gemini `503`, not a bug here.
+
+## Follow-ups
+
+- The bird icon beside the Wonder page title looks awkward (see `roadmap.md`'s backlog).
+- `VITE_CHORUS_URL` stays unset in production. Making the page usable publicly needs Turaco Chorus on HTTPS (an ALB with an ACM certificate), open access instead of the IP allow-list, and the real identity and log-data adapters instead of the fakes.
+- Cross-dimension aggregates (category broken down by date) are a development item in Turaco Chorus's `roadmap.md`; the chart here is the interim workaround.
+- Buying `loggersworld.app` (see `roadmap.md`'s backlog).
+- Turaco Chorus answers come from Gemini's free tier today, which gave `503` and quota errors. Switching to Claude needs Anthropic API credits (cloud session credits do not pay for API keys); the adapter already exists.
