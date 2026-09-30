@@ -74,6 +74,7 @@ npm test
 cd frontend
 npm install
 cp .env.example .env   # fill in VITE_USER_POOL_ID, VITE_USER_POOL_CLIENT_ID, VITE_FUNCTION_URL from step 1's outputs
+# optional: set VITE_CHORUS_URL (e.g. http://localhost:8081) to enable the Turaco Chorus page; Turaco Chorus needs AllowedOrigins=http://localhost:5173
 npm run dev
 ```
 
