@@ -19,9 +19,9 @@ Sixth post-v1 update. Makes the `deploy` job in CI queue instead of running in p
 ## Implementation checklist
 
 - [x] Add the `concurrency` block to the `deploy` job in `.github/workflows/ci.yml`
-- [ ] Merge to `main`
-- [ ] Confirm with two quick merges that the second deploy waits and then succeeds
-- [ ] Strike the "Serialise `cdk deploy` runs" item in `roadmap.md`'s backlog (that item is on the `docs/roadmap-backlog-notes` branch, not yet on `main`)
+- [x] Merge to `main` ([PR #22](https://github.com/vkwakweni/loggers-world/pull/22))
+- [ ] Confirm with two quick merges that change infrastructure that the second deploy waits and then succeeds (not yet proven: two docs-only merges 26 seconds apart on 2026-10-09 both succeeded, but a docs-only deploy changes nothing in CDK, so it could not have collided anyway)
+- [x] Strike the "Serialise `cdk deploy` runs" item in `roadmap.md`'s backlog
 
 ## Testing
 
