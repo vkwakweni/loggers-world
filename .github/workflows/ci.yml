@@ -36,6 +36,11 @@ jobs:
   deploy:
     needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # deploys queue instead of colliding (UPDATE_IN_PROGRESS); GitHub keeps only the newest queued run,
+    # which is fine as each run deploys the tip of main. pull requests get their own group so they can never join the queue
+    concurrency:
+      group: ${{ github.event_name == 'push' && 'deploy' || format('no-deploy-{0}', github.run_id) }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       id-token: write
