@@ -1,6 +1,6 @@
 ---
 title: 7-Day Development Roadmap
-last-updated: 2026-10-09
+last-updated: 2026-10-14
 ---
 
 # 7-Day Development Roadmap
@@ -117,3 +117,7 @@ last-updated: 2026-10-09
 - Wonder page bird icon looks awkward: the line-drawn `Bird` beside the "Wonder aloud" title (`Chorus.tsx`'s `.chorus-hero`) is about 20px and sits at the top-left, detached from a 40-52px heading, so it reads as a stray mark rather than part of the title (seen on a phone-width screenshot, 2026-09-30). The same icon in the nav, dashboard teaser and landing band looks fine at its small size. Options to try: scale it up to the heading's height and centre it on the title, put it inline before the title text, or swap to a different or custom bird drawing. Found while reviewing the Wonder page, 2026-09-30.
 - Buy the `loggersworld.app` domain: the app currently lives on the `loggersworld.literaturelounge.org` subdomain (it appears in CI's `FRONTEND_ORIGIN`). Moving would touch the Amplify custom domain and DNS, the CORS `FRONTEND_ORIGIN` the backend allows, and anything that links to the old address (the README's live demo link, the Turaco Chorus `AllowedOrigins` for a hosted Chorus). `.app` domains are HTTPS-only by design (the TLD is on browsers' HSTS preload list), which suits Amplify. Noted 2026-09-30, not yet bought.
 - ~~Serialise `cdk deploy` runs in CI~~ — resolved by the [2026-10-09 Serialise deploys update](updates/2026-10-09-serialise-deploy.md): a `concurrency` group on the `deploy` job queues deploys instead of letting them collide with `UPDATE_IN_PROGRESS`
+- ~~Make the Wonder page usable publicly~~ — resolved by the [2026-10-09 Wonder live update](updates/2026-10-09-wonder-live.md): Turaco Chorus on HTTPS with real identity and data, a rate limit on `/ask`, and `VITE_CHORUS_URL` set in Amplify
+- Trailing-slash routes answer `404`: a direct load or refresh of a client-side route such as `/wonder` gets a `301` to `/wonder/`, and `/wonder/` returns the app's `index.html` with a `404` status, so browsers render the page but the network tab shows a `404` and link previews or crawlers see an error. In-app links never hit it. Amplify's only custom rule is `/<*>` to `/index.html` as `404-200`, which should have turned the `404` into a `200`; the cause is not yet found (S3 folder-style handling and the rule order are the first things to check). Firefox also logged a `file:///` security error for `/dashboard/`. Found while confirming Wonder in production, 2026-10-14.
+- Wonder page says "You're offline" when Turaco Chorus is unreachable (a redeploy or an outage): `OfflineMessage.tsx` blames the visitor's connection even though the rest of the app works. A message saying the Wonder service is unavailable would be accurate. Seen during the Wonder live redeploys, 2026-10-14.
+- Wonder page shows the server's raw message for a rate-limited `/ask` (`429`): a friendlier message that says to wait a minute would read better. Noted in the Wonder live update, 2026-10-14.

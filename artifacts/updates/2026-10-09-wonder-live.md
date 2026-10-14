@@ -225,6 +225,8 @@ The Wonder page is live on the production site, served by Turaco Chorus over HTT
 
 ## Follow-ups
 
+Those below that are not specific to this update's deployment are carried into the roadmaps: Logger's World's `roadmap.md` (the trailing-slash `404`, the offline message, the `429` message) and Turaco Chorus's `roadmap.md` under "Provider reliability and answer quality" (retry, failure logging, wrong-year range, the "couldn't determine" wording, the default model, the global per-minute limit) and "Auditing" (rejected requests).
+
 - Direct loads and refreshes of a client-side route behave differently with and without a trailing slash. On 2026-10-14 `curl` showed `/wonder` and `/dashboard` answering `301` to the same path with a trailing slash, and `/wonder/` and `/dashboard/` answering `404` while still returning the app's `index.html`, so browsers render the page but the network tab shows a `404`. In-app links (`/wonder`) navigate client-side and never hit this. Amplify's only custom rule is `/<*>` to `/index.html` as `404-200`, which should have turned that `404` into a `200`. Firefox also logged a `file:///` security error for `/dashboard/`. Not investigated further; it affects every route and is unrelated to Turaco Chorus.
 
 - If the instance is replaced, Caddy asks for a new certificate; Let's Encrypt allows this at the expected rate.
