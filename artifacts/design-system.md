@@ -1,6 +1,6 @@
 ---
 title: Design System
-last-updated: 2026-07-25
+last-updated: 2026-10-14
 status: Day 5 styling pass complete — see "Scope for today"
 ---
 
@@ -99,6 +99,6 @@ Explicitly deferred (still open in the sections above, not done today):
 - Typography: Fraunces (headings) and Inter (body) via Google Fonts, system fonts as fallback; adds an `h3` style and a 64px landing hero title.
 - Log-type cards: icon picked by keyword match on the name, accent hue picked deterministically from a forest-palette set (`logTypeStyle.ts`).
 - Motion: a shared `rise` entrance on pages and cards, disabled under `prefers-reduced-motion`.
-- Turaco Chorus surfaces (`/chorus`, dashboard teaser, nav link) only render when `VITE_CHORUS_URL` is set.
+- Turaco Chorus surfaces (`/chorus`, dashboard teaser, nav link) only render when `VITE_CHORUS_URL` is set at build time. It is set in production (an Amplify environment variable, since 2026-10-14), so they show on the live site; remove it there and redeploy `main` to hide them, or leave it unset in a local `.env` to develop without them.
 - Charts: categorical series use the dataviz reference palette in fixed order (CSS tokens `--series-1`..`--series-6`, `--series-other`), validated against the light (`#f2e8cf`) and dark (`#1a1f16`) surfaces; the light theme's contrast warning is covered by an always-visible legend and a table view.
 - Dates are shown as `30 Sep 2026` in the UI (display only; stored values stay ISO), and sign-in pages use a centred `auth-page` layout.

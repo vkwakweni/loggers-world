@@ -75,6 +75,7 @@ cd frontend
 npm install
 cp .env.example .env   # fill in VITE_USER_POOL_ID, VITE_USER_POOL_CLIENT_ID, VITE_FUNCTION_URL from step 1's outputs
 # optional: set VITE_CHORUS_URL (e.g. http://localhost:8081) to enable the Turaco Chorus page; Turaco Chorus needs AllowedOrigins=http://localhost:5173
+# in production it is an Amplify environment variable pointing at the public Turaco Chorus, so the page is already on there
 npm run dev
 ```
 
